@@ -6,11 +6,7 @@ const router = Router();
 
 router.get(
   '/contacts',
-  (request, response, next) => {
-    request.appId = 'MeuAppId';
-    next();
-  },
-  ContactController.index,
+  ContactController.index
 );
 
 router.get('/contacts/:id', ContactController.show);
