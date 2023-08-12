@@ -3,7 +3,6 @@ import styled from 'styled-components';
 export default styled.select`
   width: 100%;
   height: 52px;
-  margin-top: 24px;
   background: #fff;
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.04);
   border: none;
@@ -19,8 +18,4 @@ export default styled.select`
   &::placeholder{
       color: #BCBCBC;
     }
-
-  & + & {
-    margin-top: 16px;
-  }
 `;
