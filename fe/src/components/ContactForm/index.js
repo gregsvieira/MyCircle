@@ -22,6 +22,7 @@ export default function ContactForm({ buttonLabel }) {
 
       <FormGroup>
         <Select>
+          <option value="selectOne">Social media:</option>
           <option value="x-twitter">X / Twitter</option>
           <option value="instagram">Instagram</option>
           <option value="tiktok">Tiktok</option>
