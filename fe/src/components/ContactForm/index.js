@@ -1,4 +1,5 @@
 import PropTypes from 'prop-types';
+import { useState, useRef } from 'react';
 import FormGroup from '../FormGroup';
 import { Form, ButtonContainer } from './styles';
 import Input from '../Input';
@@ -6,20 +7,28 @@ import Select from '../Select';
 import Button from '../Button';
 
 export default function ContactForm({ buttonLabel }) {
+  const [name, setName] = useState(''); // controlled Components
+  const emailInput = useRef(null); // uncontrolled Components
+
   return (
     <Form>
       <FormGroup>
-        <Input placeholder="Name" />
-      </FormGroup>
-
-      <FormGroup
-        error="The email format is invalid."
-      >
-        <Input placeholder="E-mail" error />
+        <Input
+          value={name}
+          placeholder="Name"
+          onChange={(event) => setName(event.target.value)}
+        />
       </FormGroup>
 
       <FormGroup>
-        <Input placeholder="Phone" />
+        <Input
+          ref={emailInput}
+          placeholder="E-mail"
+        />
+      </FormGroup>
+
+      <FormGroup error="The phone format is invalid.">
+        <Input placeholder="Phone" error />
       </FormGroup>
 
       <FormGroup>
