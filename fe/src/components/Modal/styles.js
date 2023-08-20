@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const OverLay = styled.div`
+export const Overlay = styled.div`
   background: rgba(0, 0, 0, 0.60);
   backdrop-filter: blur(3.5px);
   position: absolute;
