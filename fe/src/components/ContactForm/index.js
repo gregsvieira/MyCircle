@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import { useState } from 'react';
 
 import isEmailValid from '../../utils/isEmailValid';
-import isPhoneValid from '../../utils/isPhoneValid';
+import formatPhone from '../../utils/formatPhone';
 import useErrors from '../../hooks/useErrors';
 
 import { Form, ButtonContainer } from './styles';
@@ -35,7 +35,7 @@ export default function ContactForm({ buttonLabel }) {
     console.log({
       name,
       email,
-      phone,
+      phone: phone.replace(/\D/g, ''),
       category,
     });
   }
@@ -51,17 +51,11 @@ export default function ContactForm({ buttonLabel }) {
   }
 
   function handlePhoneChange(event) {
-    setPhone(event.target.value);
-
-    if (event.target.value && !isPhoneValid(event.target.value)) {
-      setError({ field: 'phone', message: 'Phone is incorrect' });
-    } else {
-      removeError('phone');
-    }
+    setPhone(formatPhone(event.target.value));
   }
 
   return (
-    <Form onSubmit={handleSubmit}>
+    <Form onSubmit={handleSubmit} noValidate>
       <FormGroup error={getErrorMessageByFieldName('name')}>
         <Input
           value={name}
@@ -76,6 +70,7 @@ export default function ContactForm({ buttonLabel }) {
       >
         <Input
           error={getErrorMessageByFieldName('email')}
+          type="email"
           value={email}
           placeholder="E-mail"
           onChange={handleEmailChange}
@@ -86,10 +81,12 @@ export default function ContactForm({ buttonLabel }) {
         error={getErrorMessageByFieldName('phone')}
       >
         <Input
+          type="tel"
           error={getErrorMessageByFieldName('phone')}
           value={phone}
           placeholder="Phone"
           onChange={handlePhoneChange}
+          maxLength="15"
         />
       </FormGroup>
 
