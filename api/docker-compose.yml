@@ -1,0 +1,19 @@
+version: "3.7"
+
+services:
+  database_mycontacts:
+    image: postgres
+    container_name: database_mycontacts
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=mycontacts
+      - POSTGRES_DB=mycontacts
+    volumes:
+      - pgdata:/data/postgres
+
+volumes:
+  pgdata:
+    driver: local
