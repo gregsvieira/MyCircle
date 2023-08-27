@@ -6,7 +6,7 @@ const router = Router();
 
 router.get(
   '/contacts',
-  ContactController.index
+  ContactController.index,
 );
 
 router.get('/contacts/:id', ContactController.show);

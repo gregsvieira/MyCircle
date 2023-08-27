@@ -1,7 +1,13 @@
 import PropTypes from 'prop-types';
 import { useState } from 'react';
-import FormGroup from '../FormGroup';
+
+import isEmailValid from '../../utils/isEmailValid';
+import formatPhone from '../../utils/formatPhone';
+import useErrors from '../../hooks/useErrors';
+
 import { Form, ButtonContainer } from './styles';
+
+import FormGroup from '../FormGroup';
 import Input from '../Input';
 import Select from '../Select';
 import Button from '../Button';
@@ -12,39 +18,79 @@ export default function ContactForm({ buttonLabel }) {
   const [phone, setPhone] = useState('');
   const [category, setCategory] = useState('');
 
-  const handleSubmit = (event) => {
+  const {
+    errors, setError, removeError, getErrorMessageByFieldName,
+  } = useErrors();
+
+  const isFormValid = (name && errors.length === 0);
+
+  function handleNameChange(event) {
+    setName(event.target.value);
+
+    if (!event.target.value) {
+      setError({ field: 'name', message: 'Name is required' });
+    } else {
+      removeError('name');
+    }
+  }
+
+  function handleSubmit(event) {
     event.preventDefault();
     console.log({
       name,
       email,
-      phone,
+      phone: phone.replace(/\D/g, ''),
       category,
     });
-  };
+  }
+
+  function handleEmailChange(event) {
+    setEmail(event.target.value);
+
+    if (event.target.value && !isEmailValid(event.target.value)) {
+      setError({ field: 'email', message: 'E-mail is incorrect' });
+    } else {
+      removeError('email');
+    }
+  }
+
+  function handlePhoneChange(event) {
+    setPhone(formatPhone(event.target.value));
+  }
 
   return (
-    <Form onSubmit={handleSubmit}>
-      <FormGroup>
+    <Form onSubmit={handleSubmit} noValidate>
+      <FormGroup error={getErrorMessageByFieldName('name')}>
         <Input
           value={name}
-          placeholder="Name"
-          onChange={(event) => setName(event.target.value)}
+          error={getErrorMessageByFieldName('name')}
+          placeholder="Name *"
+          onChange={handleNameChange}
         />
       </FormGroup>
 
-      <FormGroup>
+      <FormGroup
+        error={getErrorMessageByFieldName('email')}
+      >
         <Input
+          error={getErrorMessageByFieldName('email')}
+          type="email"
           value={email}
           placeholder="E-mail"
-          onChange={(event) => setEmail(event.target.value)}
+          onChange={handleEmailChange}
         />
       </FormGroup>
 
-      <FormGroup>
+      <FormGroup
+        error={getErrorMessageByFieldName('phone')}
+      >
         <Input
+          type="tel"
+          error={getErrorMessageByFieldName('phone')}
           value={phone}
           placeholder="Phone"
-          onChange={(event) => setPhone(event.target.value)}
+          onChange={handlePhoneChange}
+          maxLength="15"
         />
       </FormGroup>
 
@@ -60,7 +106,10 @@ export default function ContactForm({ buttonLabel }) {
         </Select>
 
         <ButtonContainer>
-          <Button type="submit">
+          <Button
+            type="submit"
+            disabled={!isFormValid}
+          >
             {buttonLabel}
           </Button>
         </ButtonContainer>
