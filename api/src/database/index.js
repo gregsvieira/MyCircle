@@ -1,14 +1,16 @@
 const { Client } = require('pg');
-const auth = require('../config/auth')
+const auth = require('../config/auth');
 
-const { host, port, user, password, database } = auth;
+const {
+  host, port, user, password, database,
+} = auth;
 
 const client = new Client({
-  host: host,
-  port: port,
-  user: user,
-  password: password,
-  database: database,
+  host,
+  port,
+  user,
+  password,
+  database,
 });
 
 client.connect()
