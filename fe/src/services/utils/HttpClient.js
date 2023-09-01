@@ -8,6 +8,16 @@ class HttpClient {
 
     return response.json();
   }
+
+  async post(path, body) {
+    const response = await fetch(`${this.baseURL}${path}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+
+    response.json();
+  }
 }
 
 export default HttpClient;
