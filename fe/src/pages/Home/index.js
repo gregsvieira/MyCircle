@@ -27,10 +27,11 @@ export default function Home() {
       try {
         setIsLoading(true);
         const contactsList = await ContactsService.listContacts(orderBy);
+
         setContacts(contactsList);
       } catch (error) {
         // Todo handle this error
-        console.log('Error:', error);
+        console.log('Catch Error:', error);
       } finally {
         setIsLoading(false);
       }
