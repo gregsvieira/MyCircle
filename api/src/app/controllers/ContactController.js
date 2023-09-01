@@ -46,7 +46,7 @@ class ContactController {
       name, email, phone, category_id,
     });
 
-    return response.json(contact);
+    return response.status(201).json(contact);
   }
 
   // Editar um registro
