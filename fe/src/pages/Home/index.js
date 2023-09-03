@@ -4,6 +4,8 @@ import {
   Container, Header, ListHeader, Card, InputSearchContainer,
 } from './styles';
 
+import APIError from '../../errors/APIError';
+
 import ContactsService from '../../services/ContactsService';
 
 import arrow from '../../assets/images/icons/arrow.svg';
@@ -30,8 +32,9 @@ export default function Home() {
 
         setContacts(contactsList);
       } catch (error) {
-        // Todo handle this error
-        console.log('Catch Error:', error);
+        if (error instanceof APIError) {
+          console.log(error);
+        }
       } finally {
         setIsLoading(false);
       }
