@@ -29,7 +29,7 @@ export const Header = styled.header`
   align-items: center;
   justify-content: ${({ justifyContent }) => justifyContent};
   margin-top: 32px;
-  border-bottom: 2px solid ${({ theme }) => theme.colors.gray[100]};
+  border-bottom: 2px solid ${({ theme }) => theme.colors.gray[200]};
   padding-bottom: 16px;
 
   strong {
@@ -150,7 +150,7 @@ export const EmptyListContainer = styled.div`
   justify-content: center;
   align-items: center;
 
-  p {
+  p && span {
     margin-top: 8px;
     text-align: center;
     color: ${({ theme }) => theme.colors.gray[200]};
@@ -158,5 +158,16 @@ export const EmptyListContainer = styled.div`
     strong {
       color: ${({ theme }) => theme.colors.primary.main};
     }
+  }
+`;
+
+export const SearchNotFoundContainer = styled.div`
+  margin-top: 16px;
+  display: flex;
+  align-items: flex-start;
+  span {
+    margin-left: 24px;
+    color: ${({ theme }) => theme.colors.gray[200]};
+    word-break: break-word;
   }
 `;
