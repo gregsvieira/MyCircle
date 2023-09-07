@@ -46,7 +46,7 @@ export const Container = styled.div`
       margin-top: 8px;
     }
 
-    .form-tem {
+    .form-item {
       position: relative;
 
       .loader {
@@ -55,14 +55,14 @@ export const Container = styled.div`
         width: 1em;
         height: 1em;
         border-radius: 50%;
-        position: relative;
+        position: absolute;
         -webkit-transform: translateZ(0);
         -ms-transform: translateZ(0);
         transform: translateZ(0);
         -webkit-animation: ${load} 1.7s infinite ease, ${round} 1.7s infinite ease;
         animation: ${load} 1.7s infinite ease, ${round} 1.7s infinite ease;
         position: absolute;
-        right: 16px;
+        right: 22px;
         top: 18px;
       }
     }

@@ -7,9 +7,7 @@ export default function FormGroup({ children, error, isLoading }) {
       <div className="form-item">
         {children}
 
-        {isLoading && (
-          <div className="loader" />
-        )}
+        {isLoading && <div className="loader" />}
       </div>
 
       {error && <small>{error}</small>}
