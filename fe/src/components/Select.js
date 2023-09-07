@@ -19,4 +19,9 @@ export default styled.select`
   &::placeholder{
       color: #BCBCBC;
     }
+
+  &[disabled] {
+    background-color: ${({ theme }) => theme.colors.gray[100]};
+    border-color: ${({ theme }) => theme.colors.gray[200]};
+  }
 `;
