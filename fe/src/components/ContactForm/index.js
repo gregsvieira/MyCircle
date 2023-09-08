@@ -52,16 +52,6 @@ export default function ContactForm({ buttonLabel }) {
     }
   }
 
-  function handleSubmit(event) {
-    event.preventDefault();
-    console.log({
-      name,
-      email,
-      phone: phone.replace(/\D/g, ''),
-      categoryId,
-    });
-  }
-
   function handleEmailChange(event) {
     setEmail(event.target.value);
 
@@ -74,6 +64,16 @@ export default function ContactForm({ buttonLabel }) {
 
   function handlePhoneChange(event) {
     setPhone(formatPhone(event.target.value));
+  }
+
+  function handleSubmit(event) {
+    event.preventDefault();
+    console.log({
+      name,
+      email,
+      phone: phone.replace(/\D/g, ''),
+      categoryId,
+    });
   }
 
   return (
