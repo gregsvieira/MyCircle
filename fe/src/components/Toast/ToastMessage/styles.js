@@ -20,7 +20,7 @@ export const Container = styled.div`
 
   ${({ type }) => containerVariants[type] || containerVariants.default}
 
-  & + & {
+  & {
     margin: 12px;
   }
 
