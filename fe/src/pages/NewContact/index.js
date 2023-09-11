@@ -2,6 +2,7 @@ import ContactForm from '../../components/ContactForm';
 import PageHeader from '../../components/PageHeader';
 
 import ContactsService from '../../services/ContactsService';
+import toast from '../../utils/toast';
 
 export default function NewContact() {
   async function handleSubmit({
@@ -19,8 +20,16 @@ export default function NewContact() {
       });
 
       console.log(response);
+
+      toast({
+        type: 'success',
+        text: `Contact ${response.name} registered successfully`,
+      });
     } catch (error) {
-      alert('An API error occurred');
+      toast({
+        type: 'danger',
+        text: error.message,
+      });
     }
   }
 
