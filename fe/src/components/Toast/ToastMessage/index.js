@@ -11,7 +11,6 @@ export default function ToastMessage({ message, onRemoveMessage }) {
       onRemoveMessage(message.id);
     }, message.duration || 7000);
 
-    console.log(timeoutId);
     return (() => {
       clearTimeout(timeoutId);
     });
