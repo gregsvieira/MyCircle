@@ -23,7 +23,7 @@ export default function NewContact() {
 
       toast({
         type: 'success',
-        text: `Contact ${response.name} registered successfully`,
+        text: `Contact '${response.name}' registered successfully`,
       });
     } catch (error) {
       toast({
