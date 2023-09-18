@@ -11,6 +11,8 @@ import ContactsService from '../../services/ContactsService';
 
 export default function EditContact() {
   const [isLoading, setIsLoading] = useState(true);
+  const [contactName, setContactName] = useState('');
+
   const contactFormRef = useRef(null);
 
   const { id } = useParams();
@@ -22,6 +24,7 @@ export default function EditContact() {
         const contactData = await ContactsService.getContactById(id);
 
         setIsLoading(false);
+        setContactName(contactData.name);
         contactFormRef.current.setFieldsValues(contactData);
       } catch {
         history.push('/');
@@ -44,7 +47,7 @@ export default function EditContact() {
       <Loader isLoading={isLoading} />
 
       <PageHeader
-        title="Edit contact"
+        title={isLoading ? 'Loading...' : `Edit ${contactName}`}
       />
       <ContactForm
         ref={contactFormRef}
