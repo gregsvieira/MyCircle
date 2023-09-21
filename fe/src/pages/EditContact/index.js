@@ -38,8 +38,32 @@ export default function EditContact() {
     loadContact();
   }, [id, history]);
 
-  function handleSubmit() {
-    //
+  async function handleSubmit(formData) {
+    try {
+      const contact = {
+        name: formData.name,
+        email: formData.email,
+        phone: formData.phone,
+        category_id: formData.categoryId,
+      };
+
+      const updatedContact = await ContactsService.updateContacts(
+        id,
+        contact,
+      );
+
+      setContactName(updatedContact.name);
+
+      toast({
+        type: 'success',
+        text: 'Contact edited successfully',
+      });
+    } catch (error) {
+      toast({
+        type: 'danger',
+        text: 'An error occurred while editing the contact',
+      });
+    }
   }
 
   return (
