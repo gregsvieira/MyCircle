@@ -13,11 +13,11 @@ class ContactsService {
     return this.httpClient.get(`/contacts/${id}`);
   }
 
-  createContacts(contact) {
+  createContact(contact) {
     return this.httpClient.post('/contacts', { body: contact });
   }
 
-  updateContacts(id, contact) {
+  updateContact(id, contact) {
     return this.httpClient.put(`/contacts/${id}`, { body: contact });
   }
 }
