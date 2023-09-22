@@ -47,7 +47,7 @@ export default function EditContact() {
         category_id: formData.categoryId,
       };
 
-      const updatedContact = await ContactsService.updateContacts(
+      const updatedContact = await ContactsService.updateContact(
         id,
         contact,
       );
