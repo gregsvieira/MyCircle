@@ -29,6 +29,7 @@ import emptyBox from '../../assets/images/empty-box.svg';
 import magnifierQuestion from '../../assets/images/magnifier-question.svg';
 
 import Loader from '../../components/Loader';
+import Modal from '../../components/Modal';
 
 export default function Home() {
   const [contacts,
@@ -60,6 +61,13 @@ export default function Home() {
     loadContacts();
   }, [loadContacts]);
 
+  function onCancel() {
+    console.log('canceled');
+  }
+
+  function onConfirm() {
+    console.log('confirmed');
+  }
   function handleOrderBy() {
     setOrderyBy(
       (prevState) => (prevState === 'asc' ? 'desc' : 'asc'),
@@ -77,6 +85,18 @@ export default function Home() {
   return (
     <Container>
       <Loader isLoading={isLoading} />
+
+      <Modal
+        danger
+        title='Are you sure you want to remove the "Mateus SIlva" contact?'
+        confirmLabel="Delete"
+        onCancel={onCancel}
+        onConfirm={onConfirm}
+      >
+        <h2>You can`&apos;`t restore this contact after remove</h2>
+        <strong>daijads</strong>
+        <p>JODASJIDSA</p>
+      </Modal>
 
       {contacts.length > 0 && (
         <InputSearchContainer>
