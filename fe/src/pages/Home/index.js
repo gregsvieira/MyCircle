@@ -200,7 +200,7 @@ export default function Home() {
           {filteredContacts.length > 0 && (
           <ListHeader orderBy={orderBy}>
             <button type="button" className="sort-button" onClick={handleOrderBy}>
-              <span>Nome</span>
+              <span>Name</span>
               <img src={arrow} alt="arrow" />
             </button>
           </ListHeader>
