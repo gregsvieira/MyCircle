@@ -8,6 +8,10 @@ class CategoriesService {
   listCategories() {
     return this.httpClient.get('/categories');
   }
+
+  createCategory(name) {
+    return this.httpClient.post('/categories', { body: name });
+  }
 }
 
 export default new CategoriesService();
