@@ -93,7 +93,7 @@ export const Card = styled.div`
     margin-top: 16px;
   }
   .info {
-    .category-name {
+    .contact-name {
       display: flex;
       align-items: center;
 
