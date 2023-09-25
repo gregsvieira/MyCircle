@@ -4,18 +4,26 @@ import { Container } from './styles';
 
 import arrow from '../../assets/images/icons/arrow.svg';
 
-export default function PageHeader({ title }) {
+export default function PageHeader({ title, path }) {
   return (
     <Container>
-      <Link to="/">
+      <Link to={path}>
         <img src={arrow} alt="Back" />
         <span>Back</span>
       </Link>
-      <h1>{title}</h1>
+
+      {title && (
+        <h1>{title}</h1>
+      )}
     </Container>
   );
 }
 
 PageHeader.propTypes = {
-  title: PropTypes.string.isRequired,
+  title: PropTypes.string,
+  path: PropTypes.string.isRequired,
+};
+
+PageHeader.defaultProps = {
+  title: undefined,
 };
