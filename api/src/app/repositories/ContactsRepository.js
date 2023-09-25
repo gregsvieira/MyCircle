@@ -21,6 +21,16 @@ class ContactsRepository {
     return row;
   }
 
+  async findByCategoryId(categoryId) {
+    const [row] = await db.query(`
+    SELECT contacts.*, categories.name AS category_name
+    FROM contacts
+    LEFT JOIN categories ON categories.id = contacts.category_id
+    WHERE contacts.category_id = $1
+    `, [categoryId]);
+    return row;
+  }
+
   async findByEmail(email) {
     const [row] = await db.query('SELECT * FROM contacts where email = $1', [email]);
     return row;

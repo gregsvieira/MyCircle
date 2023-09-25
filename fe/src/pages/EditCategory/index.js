@@ -1,72 +1,75 @@
 import { useParams, useHistory } from 'react-router-dom';
 import { useEffect, useRef, useState } from 'react';
 
+import APIError from '../../errors/APIError';
+
 import PageHeader from '../../components/PageHeader';
-import ContactForm from '../../components/ContactForm';
+import CategoryForm from '../../components/CategoryForm';
 import Loader from '../../components/Loader';
 
-import ContactsService from '../../services/ContactsService';
 import toast from '../../utils/toast';
 import useSafeAsyncAction from '../../hooks/useSafeAsyncAction';
+import CategoriesService from '../../services/CategoriesService';
 
-export default function EditContact() {
+export default function EditCategory() {
   const [isLoading, setIsLoading] = useState(true);
-  const [contactName, setContactName] = useState('');
+  const [categoryName, setCategoryName] = useState('');
 
-  const contactFormRef = useRef(null);
+  const categoryFormRef = useRef(null);
 
   const { id } = useParams();
   const history = useHistory();
   const safeAsyncAction = useSafeAsyncAction();
 
   useEffect(() => {
-    async function loadContact() {
+    async function loadCategory() {
       try {
-        const contactData = await ContactsService.getContactById(id);
+        const category = await CategoriesService.getCategoryById(id);
 
         safeAsyncAction(() => {
-          contactFormRef.current.setFieldsValues(contactData);
+          categoryFormRef.current.setFieldsValues(category);
           setIsLoading(false);
-          setContactName(contactData.name);
+          setCategoryName(category.name);
         });
-      } catch {
+      } catch (error) {
         safeAsyncAction(() => {
-          history.push('/contacts');
+          history.push('/categories');
           toast({
             type: 'danger',
-            text: 'Contact not found!',
+            text: 'Category not found!',
           });
         });
       }
     }
 
-    loadContact();
+    loadCategory();
   }, [id, history, safeAsyncAction]);
 
   async function handleSubmit(formData) {
     try {
-      const contact = {
+      const category = {
         name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        category_id: formData.categoryId,
       };
-
-      const updatedContact = await ContactsService.updateContact(
+      const updatedCategory = await CategoriesService.updateCategory(
         id,
-        contact,
+        category,
       );
 
-      setContactName(updatedContact.name);
+      setCategoryName(updatedCategory.name);
 
       toast({
         type: 'success',
-        text: 'Contact edited successfully',
+        text: 'Category edited successfully',
       });
     } catch (error) {
+      let message;
+      if (error instanceof APIError) {
+        message = error.message;
+      }
+
       toast({
         type: 'danger',
-        text: 'An error occurred while editing the contact',
+        text: `${message ?? 'Unable to edit category'}`,
       });
     }
   }
@@ -76,11 +79,11 @@ export default function EditContact() {
       <Loader isLoading={isLoading} />
 
       <PageHeader
-        title={isLoading ? 'Loading...' : `Edit ${contactName}`}
-        path="/contacts"
+        title={isLoading ? 'Loading...' : `Edit ${categoryName}`}
+        path="/categories"
       />
-      <ContactForm
-        ref={contactFormRef}
+      <CategoryForm
+        ref={categoryFormRef}
         buttonLabel="Save changes"
         onSubmit={handleSubmit}
       />

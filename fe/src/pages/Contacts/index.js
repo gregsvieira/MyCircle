@@ -16,7 +16,8 @@ import {
 } from './styles';
 
 import Button from '../../components/Button';
-import APIError from '../../errors/APIError';
+
+import ContactsService from '../../services/ContactsService';
 
 import arrow from '../../assets/images/icons/arrow.svg';
 import edit from '../../assets/images/icons/edit.svg';
@@ -27,32 +28,31 @@ import magnifierQuestion from '../../assets/images/magnifier-question.svg';
 
 import Loader from '../../components/Loader';
 import Modal from '../../components/Modal';
-
-import CategoriesService from '../../services/CategoriesService';
-import PageHeader from '../../components/PageHeader';
 import toast from '../../utils/toast';
+import PageHeader from '../../components/PageHeader';
 
-export default function Categories() {
-  const [categories, setCategories] = useState([]);
-  const [searchTerm, setSearchTerm] = useState('');
+export default function Contacts() {
+  const [contacts,
+    setContacts] = useState([]);
   const [orderBy, setOrderyBy] = useState('asc');
+  const [searchTerm, setSearchTerm] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(false);
   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
-  const [categoryBeingDeleted, setCategoryBeingDeleted] = useState(null);
+  const [contactBeingDeleted, setContactBeingDeleted] = useState(null);
   const [isLoadingDelete, setIsLoadingDelete] = useState(false);
 
-  const filteredCategories = useMemo(() => categories.filter((category) => (
-    category.name.toLowerCase().includes(searchTerm.toLowerCase())
-  )), [categories, searchTerm]);
+  const filteredContacts = useMemo(() => contacts.filter((contact) => (
+    contact.name.toLowerCase().includes(searchTerm.toLowerCase())
+  )), [contacts, searchTerm]);
 
-  const loadCategories = useCallback(async () => {
+  const loadContacts = useCallback(async () => {
     try {
       setIsLoading(true);
-      const categoriesList = await CategoriesService.listCategories(orderBy);
+      const contactsList = await ContactsService.listContacts(orderBy);
 
       setHasError(false);
-      setCategories(categoriesList);
+      setContacts(contactsList);
     } catch {
       setHasError(true);
     } finally {
@@ -60,66 +60,59 @@ export default function Categories() {
     }
   }, [orderBy]);
 
+  useEffect(() => {
+    loadContacts();
+  }, [loadContacts]);
+
   function handleOrderBy() {
     setOrderyBy(
       (prevState) => (prevState === 'asc' ? 'desc' : 'asc'),
     );
   }
 
-  useEffect(() => {
-    loadCategories();
-  }, [loadCategories]);
-
   function handleChangeSearchTerm(event) {
     setSearchTerm(event.target.value);
   }
 
   function handleTryAgain() {
-    loadCategories();
+    loadContacts();
   }
 
-  function handleDeleteCategory(category) {
-    setCategoryBeingDeleted(category);
+  function handleDeleteContact(contact) {
+    setContactBeingDeleted(contact);
     setIsDeleteModalVisible(true);
   }
 
   function handleCloseDeleteModal() {
     setIsDeleteModalVisible(false);
-    setCategoryBeingDeleted(null);
+    setContactBeingDeleted(null);
   }
 
   async function handleCloseDeleteContact() {
     try {
       setIsLoadingDelete(true);
 
-      await CategoriesService.deleteCategory(categoryBeingDeleted.id);
+      await ContactsService.deleteContact(contactBeingDeleted.id);
 
-      setCategories((prevState) => prevState.filter(
-        (category) => category.id !== categoryBeingDeleted.id,
+      setContacts((prevState) => prevState.filter(
+        (contact) => contact.id !== contactBeingDeleted.id,
       ));
 
       handleCloseDeleteModal();
 
       toast({
         type: 'success',
-        text: 'Category deleted successfully',
+        text: 'Contact deleted successfully',
       });
-    } catch (error) {
-      let message;
-      if (error instanceof APIError) {
-        message = error.message;
-      }
-
+    } catch {
       toast({
         type: 'danger',
-        text: `${message ?? 'Unable to delete category'}`,
+        text: 'Unable to delete contact',
       });
     } finally {
       setIsLoadingDelete(false);
-      handleCloseDeleteModal();
     }
   }
-
   return (
     <Container>
       <Loader isLoading={isLoading} />
@@ -127,14 +120,14 @@ export default function Categories() {
       <Modal
         danger
         isLoading={isLoadingDelete}
-        title={`Are you sure you want to remove the "${!categoryBeingDeleted?.name}" category?`}
+        title={`Are you sure you want to remove the "${!contactBeingDeleted?.name}" contact?`}
         confirmLabel="Delete"
         onCancel={handleCloseDeleteModal}
         onConfirm={handleCloseDeleteContact}
         visible={isDeleteModalVisible}
       >
         <p>
-          You can&apos;t restore this category after remove
+          You can&apos;t restore this contact after remove
         </p>
       </Modal>
 
@@ -142,12 +135,12 @@ export default function Categories() {
         path="/"
       />
 
-      {categories.length > 0 && (
+      {contacts.length > 0 && (
         <InputSearchContainer>
           <input
             value={searchTerm}
             type="text"
-            placeholder="Search category..."
+            placeholder="Search contact..."
             onChange={handleChangeSearchTerm}
           />
         </InputSearchContainer>
@@ -158,19 +151,19 @@ export default function Categories() {
           hasError
             ? 'flex-end'
             : (
-              categories.length > 0
+              contacts.length > 0
                 ? 'space-between'
                 : 'center'
             )
           )}
       >
-        {(!hasError && categories.length > 0) && (
+        {(!hasError && contacts.length > 0) && (
           <strong>
-            {filteredCategories.length}
-            {filteredCategories.length === 1 ? ' category' : ' categories'}
+            {filteredContacts.length}
+            {filteredContacts.length === 1 ? ' contact' : ' contacts'}
           </strong>
         )}
-        <Link to="/categories/new">New Category</Link>
+        <Link to="/contacts/new">New Contact</Link>
       </Header>
 
       {hasError && (
@@ -178,7 +171,7 @@ export default function Categories() {
           <img src={sad} alt="sad" />
 
           <div className="details">
-            <strong>An error occurred while trying to get the categories</strong>
+            <strong>An error occurred while trying to get the contacts</strong>
 
             <Button type="button" onClick={handleTryAgain}>
               Try again
@@ -189,25 +182,25 @@ export default function Categories() {
 
       {!hasError && (
         <>
-          {(categories.length < 1 && !isLoading) && (
+          {(contacts.length < 1 && !isLoading) && (
           <EmptyListContainer>
             <img src={emptyBox} alt="Empty box" />
 
             <p>
-              You don&apos;t have any category registered! Click the <strong>“New Category”</strong>
-              button above to register the first category!
+              You don&apos;t have any contact registered! Click the <strong>“New Contact”</strong>
+              button above to register the first contact!
             </p>
           </EmptyListContainer>
           )}
 
-          {(categories.length > 0 && filteredCategories.length < 1 && (
+          {(contacts.length > 0 && filteredContacts.length < 1 && (
             <SearchNotFoundContainer>
               <img src={magnifierQuestion} alt="Magnifier question" />
-              <span>No results were found for <strong>”{searchTerm}”</strong>.</span>
+              <span>Nenhum resultado foi encontrado para <strong>”{searchTerm}”</strong>.</span>
             </SearchNotFoundContainer>
           ))}
 
-          {filteredCategories.length > 0 && (
+          {filteredContacts.length > 0 && (
           <ListHeader orderBy={orderBy}>
             <button type="button" className="sort-button" onClick={handleOrderBy}>
               <span>Name</span>
@@ -216,23 +209,35 @@ export default function Categories() {
           </ListHeader>
           )}
 
-          {filteredCategories.map((category) => (
-            <Card key={category.id}>
+          {filteredContacts.map((contact) => (
+            <Card key={contact.id}>
               <div className="info">
-                <div className="category-name">
+                <div className="contact-name">
                   <strong>
-                    {category.name}
+                    {contact.name}
                   </strong>
+                  {contact.category_name && (
+                  <small>
+                    {contact.category_name}
+                  </small>
+                  )}
                 </div>
+
+                <span>
+                  {contact.email}
+                </span>
+                <span>
+                  {contact.phone}
+                </span>
               </div>
 
               <div className="actions">
-                <Link to={`categories/edit/${category.id}`}>
+                <Link to={`contacts/edit/${contact.id}`}>
                   <img src={edit} alt="edit" />
                 </Link>
                 <button
                   type="button"
-                  onClick={() => handleDeleteCategory(category)}
+                  onClick={() => handleDeleteContact(contact)}
                 >
                   <img src={trash} alt="delete" />
                 </button>

@@ -5,169 +5,42 @@ export const Container = styled.div`
   position: relative;
 `;
 
-export const InputSearchContainer = styled.div`
-  width: 100%;
-
-  input {
-    width: 100%;
-    height: 50px;
-    background-color: #fff;
-    border: none;
-    border-radius: 25px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.04);
-    outline: 0;
-    padding: 0 16px;
-
-    &::placeholder{
-      color: #BCBCBC;
-    }
-  }
-`;
-
 export const Header = styled.header`
   display: flex;
   align-items: center;
-  justify-content: ${({ justifyContent }) => justifyContent};
-  margin-top: 32px;
+  justify-content: center;
+  padding-bottom: 16px;
+  margin: 32px 0px;
+
+  h1 {
+    color: #222;
+    font-size: 28px;
+  }
+`;
+
+export const MenuBar = styled.div`
+  display: flex;
+  align-items: center;
   border-bottom: 2px solid ${({ theme }) => theme.colors.gray[200]};
   padding-bottom: 16px;
-
-  strong {
-    color: #222;
-    font-size: 24px;
-  }
+  justify-content: center;
+  flex-direction: column;
 
   a {
-    font-weight: bold;
-    color: ${({ theme }) => theme.colors.primary.main};
-    text-decoration: none;
-    border: 2px solid ${({ theme }) => theme.colors.primary.main};
-    border-radius: 4px;
-    padding: 8px 16px;
-    transition: all 0.2s ease-in;
-
-    &:hover {
-      background: ${({ theme }) => theme.colors.primary.main};
-      color: #fff;
-    }
-  }
-`;
-
-export const ListHeader = styled.header`
-  margin-top: 24px;
-  margin-bottom: 8px;
-
-  button {
-      background: transparent;
-      border: none;
-      display: flex;
-      align-items: center;
-
-    span {
-      margin-right: 8px;
       font-weight: bold;
       color: ${({ theme }) => theme.colors.primary.main};
-    }
+      text-decoration: none;
+      border: 2px solid ${({ theme }) => theme.colors.primary.main};
+      border-radius: 4px;
+      padding: 8px 16px;
+      transition: all 0.2s ease-in;
+      margin-bottom: 12px;
 
-    img {
-      transform: ${({ orderBy }) => (orderBy === 'asc' ? 'rotate(180deg)' : 'rotate(0deg)')};
-      transition: transform 0.2s ease-in;
-    }
-  }
-
-
-`;
-
-export const Card = styled.div`
-  background: #fff;
-  height: 96px;
-  width: 100%;
-  padding: 16px;
-  box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.04);
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  & + & {
-    margin-top: 16px;
-  }
-  .info {
-    .contact-name {
-      display: flex;
-      align-items: center;
-
-      small {
-        background: ${({ theme }) => theme.colors.primary.lighter};
-        color: ${({ theme }) => theme.colors.primary.main};
-        font-weight: bold;
-        text-transform: uppercase;
-        padding: 4px;
-        border-radius: 4px;
-        margin-left: 8px;
+      &:hover {
+        background: ${({ theme }) => theme.colors.primary.main};
+        color: #fff;
       }
     }
 
-    span {
-        display: block;
-        font-size: 14px;
-        color: ${({ theme }) => theme.colors.gray[200]};
-      }
-  }
 
-  .actions {
-    display: flex;
-    align-items: center;
-    button {
-      background: transparent;
-      border: none;
-      margin-left: 8px;
-    }
-  }
-`;
-
-export const ErrorContainer = styled.div`
-  display: flex;
-  margin-top: 16px;
-  align-items: center;
-
-  .details {
-    margin-left: 16px;
-
-    strong {
-    font-size: 16px;
-    color: ${({ theme }) => theme.colors.danger.main};
-    display: block;
-    margin-bottom: 8px;
-  }
-  }
-`;
-
-export const EmptyListContainer = styled.div`
-  margin-top: 16px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-
-  p && span {
-    margin-top: 8px;
-    text-align: center;
-    color: ${({ theme }) => theme.colors.gray[200]};
-
-    strong {
-      color: ${({ theme }) => theme.colors.primary.main};
-    }
-  }
-`;
-
-export const SearchNotFoundContainer = styled.div`
-  margin-top: 16px;
-  display: flex;
-  align-items: flex-start;
-  span {
-    margin-left: 24px;
-    color: ${({ theme }) => theme.colors.gray[200]};
-    word-break: break-word;
-  }
-`;
+  `;
