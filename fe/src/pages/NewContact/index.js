@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useState, useRef, useCallback } from 'react';
 import ContactForm from '../../components/ContactForm';
 import PageHeader from '../../components/PageHeader';
 
@@ -7,6 +7,15 @@ import toast from '../../utils/toast';
 
 export default function NewContact() {
   const contactFormRef = useRef(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const stopLoading = useCallback(async () => {
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 200);
+  }, []);
+
+  stopLoading();
 
   async function handleSubmit({
     name,
@@ -39,7 +48,8 @@ export default function NewContact() {
   return (
     <>
       <PageHeader
-        title="New contact"
+        title={isLoading ? 'Loading...' : 'New contact'}
+        path="/contacts"
       />
       <ContactForm
         ref={contactFormRef}
