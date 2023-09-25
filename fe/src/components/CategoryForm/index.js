@@ -44,10 +44,7 @@ const CategoryForm = forwardRef(({ buttonLabel, onSubmit }, ref) => {
     event.preventDefault();
 
     setIsSubmitting(true);
-
-    await onSubmit(
-      name,
-    );
+    await onSubmit({ name });
 
     setIsSubmitting(false);
   }
