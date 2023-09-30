@@ -216,9 +216,9 @@ export default function Contacts() {
                   <strong>
                     {contact.name}
                   </strong>
-                  {contact.category_name && (
+                  {contact.category.name && (
                   <small>
-                    {contact.category_name}
+                    {contact.category.name}
                   </small>
                   )}
                 </div>
