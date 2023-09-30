@@ -1,4 +1,5 @@
 import HttpClient from './utils/HttpClient';
+import CategoryMapper from './mappers/CategoryMapper';
 
 class CategoriesService {
   constructor() {
@@ -13,13 +14,14 @@ class CategoriesService {
     return this.httpClient.get(`/categories/${id}`);
   }
 
-  createCategory(name) {
-    return this.httpClient.post('/categories', { body: name });
+  createCategory(contact) {
+    const body = CategoryMapper.toPersistence(contact);
+    return this.httpClient.post('/categories', { body });
   }
 
-  updateCategory(id, category) {
-    console.log(category);
-    return this.httpClient.put(`/categories/${id}`, { body: category });
+  updateCategory(id, contact) {
+    const body = CategoryMapper.toPersistence(contact);
+    return this.httpClient.put(`/categories/${id}`, { body });
   }
 
   deleteCategory(id) {
