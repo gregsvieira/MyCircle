@@ -5,17 +5,16 @@ import PageHeader from '../../components/PageHeader';
 
 import toast from '../../utils/toast';
 import CategoriesService from '../../services/CategoriesService';
+import CategoryMapper from '../../services/mappers/CategoryMapper';
 
 export default function NewCategory() {
   const contactFormRef = useRef(null);
 
-  async function handleSubmit(
-    name,
-  ) {
+  async function handleSubmit(formData) {
     try {
-      const response = await CategoriesService.createCategory({
-        name,
-      });
+      const category = CategoryMapper.toPersistence(formData);
+
+      const response = await CategoriesService.createCategory(category);
 
       toast({
         type: 'success',
@@ -33,6 +32,7 @@ export default function NewCategory() {
     <>
       <PageHeader
         title="New category"
+        path="/categories"
       />
       <CategoryForm
         ref={contactFormRef}

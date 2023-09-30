@@ -45,15 +45,9 @@ export default function EditCategory() {
     loadCategory();
   }, [id, history, safeAsyncAction]);
 
-  async function handleSubmit(formData) {
+  async function handleSubmit(category) {
     try {
-      const category = {
-        name: formData.name,
-      };
-      const updatedCategory = await CategoriesService.updateCategory(
-        id,
-        category,
-      );
+      const updatedCategory = await CategoriesService.updateCategory(id, category);
 
       setCategoryName(updatedCategory.name);
 
