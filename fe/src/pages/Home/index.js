@@ -1,7 +1,5 @@
 import { Link } from 'react-router-dom';
-import {
-  useState, useCallback,
-} from 'react';
+
 import {
   Container,
   Header,
@@ -9,16 +7,13 @@ import {
 } from './styles';
 
 import Loader from '../../components/Loader';
+import useHome from './useHome';
 
 export default function Home() {
-  const [isLoading, setIsLoading] = useState(true);
+  const {
+    isLoading,
+  } = useHome();
 
-  const stopLoading = useCallback(async () => {
-    setTimeout(() => {
-      setIsLoading(false);
-    }, 200);
-  }, []);
-  stopLoading();
   return (
     <Container>
       <Loader isLoading={isLoading} />
@@ -28,6 +23,7 @@ export default function Home() {
       </Header>
 
       <MenuBar>
+        <Link to="/upload">Upload</Link>
         <Link to="/contacts">Contacts</Link>
         <Link to="/categories">Categories</Link>
       </MenuBar>

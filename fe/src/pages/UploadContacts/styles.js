@@ -5,6 +5,54 @@ export const Container = styled.div`
   position: relative;
 `;
 
+export const InputSearchContainer = styled.div`
+  width: 100%;
+
+  input {
+    width: 100%;
+    height: 50px;
+    background-color: #fff;
+    border: none;
+    border-radius: 25px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.04);
+    outline: 0;
+    padding: 0 16px;
+
+    &::placeholder{
+      color: #BCBCBC;
+    }
+  }
+`;
+
+export const Header = styled.header`
+  display: flex;
+  align-items: center;
+  justify-content: ${({ justifyContent }) => justifyContent};
+  margin-top: 32px;
+  border-bottom: 2px solid ${({ theme }) => theme.colors.gray[200]};
+  padding-bottom: 16px;
+
+  strong {
+    color: #222;
+    font-size: 24px;
+  }
+
+  a {
+    font-weight: bold;
+    color: ${({ theme }) => theme.colors.primary.main};
+    text-decoration: none;
+    border: 2px solid ${({ theme }) => theme.colors.primary.main};
+    border-radius: 4px;
+    padding: 8px 16px;
+    transition: all 0.2s ease-in;
+
+    &:hover {
+      background: ${({ theme }) => theme.colors.primary.main};
+      color: #fff;
+    }
+  }
+`;
+
 export const ListHeader = styled.header`
   margin-top: 24px;
   margin-bottom: 8px;
@@ -45,7 +93,7 @@ export const Card = styled.div`
     margin-top: 16px;
   }
   .info {
-    .contact-name {
+    .category-name {
       display: flex;
       align-items: center;
 
