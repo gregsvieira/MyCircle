@@ -6,12 +6,16 @@ class CategoriesService {
     this.httpClient = new HttpClient('http://localhost:3001');
   }
 
-  listCategories(orderBy = 'asc') {
-    return this.httpClient.get(`/categories?orderBy=${orderBy}`);
+  async listCategories(orderBy = 'asc') {
+    const categories = await this.httpClient.get(`/categories?orderBy=${orderBy}`);
+
+    return categories.map(CategoryMapper.toDomain);
   }
 
-  getCategoryById(id) {
-    return this.httpClient.get(`/categories/${id}`);
+  async getCategoryById(id) {
+    const category = await this.httpClient.get(`/categories/${id}`);
+
+    return CategoryMapper.toDomain(category);
   }
 
   createCategory(contact) {
