@@ -37,8 +37,9 @@ export default function Contacts() {
     handleDeleteContact,
   } = useContacts();
 
-  console.log('aquiiiiiiiiii');
-  console.log(contactBeingDeleted);
+  const hasContacts = !hasError && contacts.length > 0;
+  const isEmptyList = !hasError && (!isLoading && !hasContacts);
+  const isSearchEmpty = !hasError && (hasContacts && filteredContacts.length < 1);
 
   return (
     <Container>
@@ -48,7 +49,7 @@ export default function Contacts() {
         path="/"
       />
 
-      {contacts.length > 0 && (
+      {hasContacts && (
         <InputSearch
           value={searchTerm}
           onChange={handleChangeSearchTerm}
@@ -62,17 +63,11 @@ export default function Contacts() {
       />
 
       {hasError && <ErrorStatus onTryAgain={handleTryAgain} />}
+      {isEmptyList && <EmptyList />}
+      {isSearchEmpty && <SearchNotFound searchTerm={searchTerm} />}
 
-      {!hasError && (
+      {hasContacts && (
         <>
-          {(contacts.length < 1 && !isLoading) && (
-            <EmptyList />
-          )}
-
-          {(contacts.length > 0 && filteredContacts.length < 1 && (
-            <SearchNotFound searchTerm={searchTerm} />
-          ))}
-
           <ContactsList
             filteredContacts={filteredContacts}
             orderBy={orderBy}
