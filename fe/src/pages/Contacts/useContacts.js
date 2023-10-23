@@ -29,6 +29,7 @@ export default function useContacts() {
       setContacts(contactsList);
     } catch {
       setHasError(true);
+      setContacts([]);
     } finally {
       setIsLoading(false);
     }
