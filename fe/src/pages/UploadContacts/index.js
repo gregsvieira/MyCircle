@@ -1,155 +1,240 @@
-// /* eslint-disable react/jsx-one-expression-per-line */
-// /* eslint-disable no-nested-ternary */
-// import { Link } from 'react-router-dom';
-// import {
-//   useMemo,
-//   useState,
-// } from 'react';
-// import {
-//   Container,
-//   Header,
-//   ListHeader,
-//   EmptyListContainer,
-//   Card,
-//   InputSearchContainer,
-//   SearchNotFoundContainer,
-// } from './styles';
+/* eslint-disable import/no-extraneous-dependencies */
+/* eslint-disable no-plusplus */
+/* eslint-disable no-shadow */
+/* eslint-disable react/no-array-index-key */
+/* eslint-disable react/jsx-one-expression-per-line */
+/* eslint-disable no-nested-ternary */
 
-// // import Button from '../../components/Button';
-// // import APIError from '../../errors/APIError';
+import React, { useState, useMemo, useRef } from 'react';
+import csv from 'csvtojson';
+import FormGroup from '../../components/FormGroup';
+// import Input from '../../components/Input';
+import Button from '../../components/Button';
+import { Form, ButtonContainer } from './styles';
+import useErrors from '../../hooks/useErrors';
+import PageHeader from '../../components/PageHeader';
+import ContactsList from '../Contacts/components/ContactsList';
+import InputSearch from '../Contacts/components/InputSearch';
+import InputFileUpload from './InputFileUpload';
+import UploadService from '../../services/UploadService';
+import toast from '../../utils/toast';
+import validateFields from '../../utils/validateFields';
 
-// // import arrow from '../../assets/images/icons/arrow.svg';
-// import edit from '../../assets/images/icons/edit.svg';
-// import trash from '../../assets/images/icons/trash.svg';
-// // import sad from '../../assets/images/sad.svg';
-// import emptyBox from '../../assets/images/empty-box.svg';
-// import magnifierQuestion from '../../assets/images/magnifier-question.svg';
+import Modal from '../../components/Modal';
 
-// // import Loader from '../../components/Loader';
+export default function UploadContacts() {
+  const [csvData, setCsvData] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [contacts,
+    setContacts] = useState([]);
+  const [orderBy, setOrderyBy] = useState('asc');
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedFile, setSelectedFile] = useState(null);
+  const fileInputRef = useRef(null);
+  const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
+  const [contactBeingDeleted, setContactBeingDeleted] = useState(null);
+  const [isLoadingDelete, setIsLoadingDelete] = useState(false);
+  const [editingContact, setEditingContact] = useState(null);
 
-// import PageHeader from '../../components/PageHeader';
-// // import toast from '../../utils/toast';
+  const reader = new FileReader();
+  console.log(editingContact);
+  const handleClick = () => {
+    fileInputRef.current.click();
+  };
 
-// export default function UploadContacts() {
-//   const [isLoading, setIsLoading] = useState(true);
-//   const [searchTerm, setSearchTerm] = useState('');
-//   const [files, setFiles] = useState([]);
-//   const [hasError, setHasError] = useState(false);
-//   const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
-//   const [fileBeingDeleted, setFileBeingDeleted] = useState(null);
-//   const [isLoadingDelete, setIsLoadingDelete] = useState(false);
+  const filteredContacts = useMemo(() => contacts.filter((contact) => (
+    contact.name.toLowerCase().includes(searchTerm.toLowerCase())
+  )), [contacts, searchTerm]);
 
-//   const filteredFiles = useMemo(() => files.filter((file) => (
-//     file.name.toLowerCase().includes(searchTerm.toLowerCase())
-//   )), [files, searchTerm]);
+  const {
+    errors, setError, removeError, getErrorMessageByFieldName,
+  } = useErrors();
 
-//   function handleChangeSearchTerm(event) {
-//     setSearchTerm(event.target.value);
-//   }
+  const handleRead = async (file) => {
+    reader.onload = (event) => {
+      const content = event.target.result;
+      const jsonContent = csv(
+        {
+          noheader: false,
+          output: 'json',
+          delimiter: ';',
+          headers: ['name', 'email', 'phone', 'category'],
+        },
+      ).fromString(content);
 
-//   function handleDeleteFile(file) {
-//     setFileBeingDeleted(file);
-//     setIsDeleteModalVisible(true);
-//   }
+      jsonContent.then((data) => {
+        const formatedContact = data.map((contact, index) => {
+          const errors = validateFields(contact.name, contact.email, contact.phone);
 
-//   function handleCloseDeleteModal() {
-//     setIsDeleteModalVisible(false);
-//     setFileBeingDeleted(null);
-//   }
+          return {
+            ...contact,
+            id: String(index),
+            category: {
+              name: contact.category,
+              id: String(index),
+            },
+            errors,
+          };
+        });
+        setContacts(formatedContact);
+      });
+    };
 
-//   return (
-//     <Container>
-//       {/* <Loader isLoading={isLoading} /> */}
+    reader.readAsText(file);
+  };
 
-//       <PageHeader
-//         path="/"
-//       />
+  const handleChoose = (event) => {
+    const file = event.target.files[0];
 
-//       {files.length > 0 && (
-//       <InputSearchContainer>
-//         <input
-//           value={searchTerm}
-//           type="text"
-//           placeholder="Search category..."
-//           onChange={handleChangeSearchTerm}
-//         />
-//       </InputSearchContainer>
-//       )}
+    if (file) {
+      if (!file.name.endsWith('.csv')) {
+        setError({ field: 'file', message: 'Only CSV files are accepted' });
+      } else {
+        removeError('file');
+        setCsvData(file.name);
+        setSelectedFile(file);
+        handleRead(file);
+      }
+    }
+  };
 
-//       <Header
-//         justifyContent={(
-//           hasError
-//             ? 'flex-end'
-//             : (
-//               files.length > 0
-//                 ? 'space-between'
-//                 : 'center'
-//             )
-//           )}
-//       >
-//         {(!hasError && files.length > 0) && (
-//         <strong>
-//           {filteredFiles.length}
-//           {filteredFiles.length === 1 ? ' category' : ' categories'}
-//         </strong>
-//         )}
-//         <Link to="/files/import">Import file</Link>
-//       </Header>
+  function handleOrderBy() {
+    setOrderyBy(
+      (prevState) => (prevState === 'asc' ? 'desc' : 'asc'),
+    );
+  }
 
-//       {!hasError && (
-//         <>
-//           {(files.length < 1 && !isLoading) && (
-//           <EmptyListContainer>
-//             <img src={emptyBox} alt="Empty box" />
+  function handleChangeSearchTerm(event) {
+    setSearchTerm(event.target.value);
+  }
 
-//             <p>
-//               You don&apos;t have any file imported! Click the <strong>“Import File”</strong>
-//               button above to import the first!
-//             </p>
-//           </EmptyListContainer>
-//           )}
+  async function handleSubmit(event) {
+    event.preventDefault();
 
-//           {(files.length > 0 && filteredFiles.length < 1 && (
-//           <SearchNotFoundContainer>
-//             <img src={magnifierQuestion} alt="Magnifier question" />
-//             <span>No results were found for <strong>”{searchTerm}”</strong>.</span>
-//           </SearchNotFoundContainer>
-//           ))}
+    setIsSubmitting(true);
 
-//           {/* {filteredFiles.length > 0 && (
-//           <ListHeader orderBy={orderBy}>
-//             <button type="button" className="sort-button" onClick={handleOrderBy}>
-//               <span>Name</span>
-//               <img src={arrow} alt="arrow" />
-//             </button>
-//           </ListHeader>
-//           )} */}
+    const result = await UploadService.uploadFile(contacts);
 
-//           {filteredFiles.map((file) => (
-//             <Card key={file.id}>
-//               <div className="info">
-//                 <div className="file-name">
-//                   <strong>
-//                     {file.name}
-//                   </strong>
-//                 </div>
-//               </div>
+    if (result) {
+      toast({
+        type: 'success',
+        text: `Contacts added: ${result.contacts.length}`,
+      });
+      toast({
+        type: 'success',
+        text: `Categories added: ${result.categories.length}`,
+      });
+    }
+    setIsSubmitting(false);
+  }
 
-//               <div className="actions">
-//                 <Link to={`file/show/${file.id}`}>
-//                   <img src={edit} alt="show" />
-//                 </Link>
-//                 <button
-//                   type="button"
-//                   onClick={() => handleDeleteFile(file)}
-//                 >
-//                   <img src={trash} alt="delete" />
-//                 </button>
-//               </div>
-//             </Card>
-//           ))}
-//         </>
-//       )}
-//     </Container>
-//   );
-// }
+  function handleDeleteContact(contact) {
+    setContactBeingDeleted(contact);
+    setIsDeleteModalVisible(true);
+  }
+
+  const handleEditContact = (contact) => {
+    setEditingContact(contact);
+  };
+
+  // const handleCancelEdit = () => {
+  //   setEditingContact(null);
+  // };
+
+  // const handleSaveEdit = () => {
+  //   setEditingContact(null);
+  // };
+
+  function handleCloseDeleteModal() {
+    setIsDeleteModalVisible(false);
+  }
+
+  async function handleCloseDeleteContact() {
+    try {
+      setIsLoadingDelete(true);
+
+      setContacts((prevState) => prevState.filter(
+        (contact) => contact.id !== contactBeingDeleted.id,
+      ));
+
+      handleCloseDeleteModal();
+
+      toast({
+        type: 'success',
+        text: 'Contact deleted successfully',
+      });
+    } catch {
+      toast({
+        type: 'danger',
+        text: 'Unable to delete contact',
+      });
+    } finally {
+      setIsLoadingDelete(false);
+    }
+  }
+
+  const hasContacts = contacts.length > 0;
+
+  return (
+    <>
+      <PageHeader path="/" />
+
+      {hasContacts && (
+        <InputSearch
+          value={searchTerm}
+          onChange={handleChangeSearchTerm}
+        />
+      )}
+
+      <Form onSubmit={handleSubmit} noValidate>
+        <FormGroup error={getErrorMessageByFieldName('file')}>
+          <InputFileUpload
+            onClick={handleClick}
+            error={getErrorMessageByFieldName('file')}
+            onChange={handleChoose}
+            ref={fileInputRef}
+            fileFormat=".csv"
+            selectedFile={selectedFile}
+          />
+        </FormGroup>
+
+        <ButtonContainer>
+          <Button
+            type="submit"
+            disabled={!csvData || isSubmitting || errors.length > 0 || !hasContacts}
+            isLoading={isSubmitting}
+          >
+            Import
+          </Button>
+        </ButtonContainer>
+      </Form>
+
+      {hasContacts && (
+        <>
+          <ContactsList
+            filteredContacts={filteredContacts}
+            orderBy={orderBy}
+            onToggleOrderBy={handleOrderBy}
+            onDeleteContact={handleDeleteContact}
+            onEditContact={handleEditContact}
+            isEditable
+          />
+
+          <Modal
+            danger
+            isLoading={isLoadingDelete}
+            title={`Are you sure you want to remove the "${contactBeingDeleted?.name}" contact of the import list?`}
+            confirmLabel="Delete"
+            onCancel={handleCloseDeleteModal}
+            onConfirm={handleCloseDeleteContact}
+            visible={isDeleteModalVisible}
+          >
+            <p>
+              You can&apos;t restore this contact after remove
+            </p>
+          </Modal>
+        </>
+      )}
+    </>
+  );
+}
