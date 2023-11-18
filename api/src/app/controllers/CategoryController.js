@@ -112,6 +112,52 @@ class CategoryController {
 
     return response.json(category);
   }
+
+  async batchStoreCategories(request, response) {
+    const categoriesRequested = request.body;
+
+    const allCategories = await CategoriesRepository.findAll();
+
+    const categoriesMapped = new Map(allCategories.map((category) => (
+      [(category.name).toLowerCase(), category.id]
+    )));
+
+    const categoriesFounded = [];
+    const categoriesNotFounded = [];
+
+    categoriesRequested.map((categoryRequested) => {
+      const categoryFoundId = categoriesMapped.get(categoryRequested.name);
+      let categoryFound;
+      let categoryNotFound;
+
+      if (categoryFoundId !== undefined) {
+        categoryFound = {
+          name: categoryRequested.name,
+          id: categoryFoundId,
+          created: false,
+        };
+        categoriesFounded.push(categoryFound);
+      } else {
+        categoryNotFound = {
+          name: categoryRequested.name,
+          id: categoryFoundId,
+          created: false,
+        };
+        categoriesNotFounded.push(categoryNotFound);
+      }
+      return true;
+    });
+
+    if (!categoriesNotFounded.length) {
+      return response.json({
+        categories: { ...categoriesFounded },
+      }).status(200);
+    }
+    // if (categoriesNotFounded)
+    // const res = await CategoriesRepository.createManyCategories(categoriesNotFounded);
+    // console.log(res);
+    return response.json('ok').status(200);
+  }
 }
 
 module.exports = new CategoryController();
