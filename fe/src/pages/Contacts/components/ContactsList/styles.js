@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 export const ListHeader = styled.header`
   margin-top: 24px;
@@ -21,8 +21,6 @@ export const ListHeader = styled.header`
       transition: transform 0.2s ease-in;
     }
   }
-
-
 `;
 
 export const Card = styled.div`
@@ -35,6 +33,7 @@ export const Card = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
+
 
   & + & {
     margin-top: 16px;
@@ -71,4 +70,16 @@ export const Card = styled.div`
       margin-left: 8px;
     }
   }
+
+  ${({ theme, hasError }) => hasError
+    && css`
+    border: 2px solid ${theme.colors.danger.lighter}
+  `}
+`;
+
+export const Sentinel = styled.div`
+  margin-top: 20px;
+  height: 48px;
+  width: 100%;
+  padding: 16px;
 `;
