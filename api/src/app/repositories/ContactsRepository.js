@@ -36,7 +36,7 @@ class ContactsRepository {
     return row;
   }
 
-  async create({
+  async createNewContact({
     name, email, phone, category_id,
   }) {
     const [row] = await db.query(`
@@ -48,7 +48,7 @@ class ContactsRepository {
     return row;
   }
 
-  async update(id, {
+  async updateContactById(id, {
     name, email, phone, category_id,
   }) {
     const [row] = await db.query(`
@@ -60,9 +60,24 @@ class ContactsRepository {
     return row;
   }
 
-  async delete(id) {
+  async deleteContactById(id) {
     const deleteOperation = await db.query('DELETE FROM contacts WHERE id = $1', [id]);
     return deleteOperation;
+  }
+
+  async createManyContacts(contacts) {
+    const placeholders = contacts.map((_, index) => `($${index * 4 + 1}, $${index * 4 + 2}, $${index * 4 + 3}, $${index * 4 + 4})`).join(', ');
+
+    const result = await db.query(`
+    INSERT INTO contacts(name, email, phone, category_id)
+    VALUES ${placeholders}
+    ON CONFLICT ON CONSTRAINT unique_name_email DO NOTHING
+    RETURNING *
+    `, contacts.flatMap((contact) => (
+      [contact.name, contact.email, contact.phone, contact.category]
+    )));
+
+    return result;
   }
 }
 
