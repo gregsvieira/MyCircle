@@ -15,3 +15,6 @@ CREATE TABLE IF NOT EXISTS contacts (
   category_id UUID,
   FOREIGN KEY(category_id) REFERENCES categories(id)
 );
+
+ALTER TABLE contacts
+ADD CONSTRAINT unique_name_email UNIQUE (name, email);
