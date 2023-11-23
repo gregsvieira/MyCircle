@@ -14,17 +14,16 @@ class CategoriesService {
 
   async getCategoryById(id) {
     const category = await this.httpClient.get(`/categories/${id}`);
-
     return CategoryMapper.toDomain(category);
   }
 
-  createCategory(contact) {
-    const body = CategoryMapper.toPersistence(contact);
+  createCategory(category) {
+    const body = CategoryMapper.toPersistence(category);
     return this.httpClient.post('/categories', { body });
   }
 
-  updateCategory(id, contact) {
-    const body = CategoryMapper.toPersistence(contact);
+  updateCategory(id, category) {
+    const body = CategoryMapper.toPersistence(category);
     return this.httpClient.put(`/categories/${id}`, { body });
   }
 

@@ -1,7 +1,6 @@
 import { useState, useRef, useCallback } from 'react';
 import ContactsService from '../../services/ContactsService';
 import toast from '../../utils/toast';
-import ContactMapper from '../../services/mappers/ContactMapper';
 
 export default function useNewContact() {
   const contactFormRef = useRef(null);
@@ -15,10 +14,8 @@ export default function useNewContact() {
 
   stopLoading();
 
-  async function handleSubmit(formData) {
+  async function handleSubmit(contact) {
     try {
-      const contact = ContactMapper.toPersistence(formData);
-
       const response = await ContactsService.createContact(contact);
 
       contactFormRef.current.resetFields();

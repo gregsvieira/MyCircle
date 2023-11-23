@@ -62,7 +62,7 @@ class ContactController {
       }
     }
 
-    const contact = await ContactsRepository.create({
+    const contact = await ContactsRepository.createNewContact({
       name,
       email: email || null,
       phone,
@@ -115,7 +115,7 @@ class ContactController {
       }
     }
 
-    const contact = await ContactsRepository.update(id, {
+    const contact = await ContactsRepository.updateContactById(id, {
       name,
       email: email || null,
       phone,
@@ -140,9 +140,15 @@ class ContactController {
       return response.status(404).json({ error: 'Contact not found' });
     }
 
-    await ContactsRepository.delete(id);
+    await ContactsRepository.deleteContactById(id);
     // 204: No content
     return response.sendStatus(204);
+  }
+
+  async batchStoreContacts(request, response) {
+    console.log(request.body);
+
+    return response.json(request).status(200);
   }
 }
 

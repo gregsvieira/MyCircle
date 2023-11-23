@@ -1,6 +1,7 @@
 const { Router } = require('express');
 const ContactController = require('./app/controllers/ContactController');
 const CategoryController = require('./app/controllers/CategoryController');
+const UploadController = require('./app/controllers/UploadController');
 
 const router = Router();
 
@@ -12,6 +13,7 @@ router.get(
 router.get('/contacts/:id', ContactController.show);
 router.delete('/contacts/:id', ContactController.delete);
 router.post('/contacts/', ContactController.store);
+router.post('/contacts/batch', ContactController.batchStoreContacts);
 router.put('/contacts/:id', ContactController.update);
 
 router.get('/categories', CategoryController.index);
@@ -19,5 +21,7 @@ router.get('/categories/:id', CategoryController.show);
 router.delete('/categories/:id', CategoryController.delete);
 router.post('/categories', CategoryController.store);
 router.put('/categories/:id', CategoryController.update);
+
+router.post('/upload', UploadController.execute);
 
 module.exports = router;

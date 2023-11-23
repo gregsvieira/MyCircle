@@ -2,16 +2,15 @@ import { useRef } from 'react';
 
 import toast from '../../utils/toast';
 import CategoriesService from '../../services/CategoriesService';
-import CategoryMapper from '../../services/mappers/CategoryMapper';
 
 export default function useNewCategory() {
-  const contactFormRef = useRef(null);
+  const categoryFormRef = useRef(null);
 
-  async function handleSubmit(formData) {
+  async function handleSubmit(category) {
     try {
-      const category = CategoryMapper.toPersistence(formData);
-
       const response = await CategoriesService.createCategory(category);
+
+      categoryFormRef.current.resetFields();
 
       toast({
         type: 'success',
@@ -26,7 +25,7 @@ export default function useNewCategory() {
   }
 
   return {
-    contactFormRef,
+    categoryFormRef,
     handleSubmit,
   };
 }

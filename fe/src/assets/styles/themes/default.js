@@ -13,6 +13,7 @@ export default {
       100: '#E5E5E5',
     },
     danger: {
+      lighter: '#F971718F',
       light: '#F97171',
       main: '#FC5050',
       dark: '#F63131',
