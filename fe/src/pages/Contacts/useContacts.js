@@ -29,6 +29,7 @@ export default function useContacts() {
       setContacts(contactsList);
     } catch {
       setHasError(true);
+      setContacts([]);
     } finally {
       setIsLoading(false);
     }
@@ -59,7 +60,6 @@ export default function useContacts() {
 
   function handleCloseDeleteModal() {
     setIsDeleteModalVisible(false);
-    setContactBeingDeleted(null);
   }
 
   async function handleCloseDeleteContact() {

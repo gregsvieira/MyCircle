@@ -5,7 +5,7 @@ import useNewCategory from './useCategory';
 
 export default function NewCategory() {
   const {
-    contactFormRef,
+    categoryFormRef,
     handleSubmit,
   } = useNewCategory();
 
@@ -16,7 +16,7 @@ export default function NewCategory() {
         path="/categories"
       />
       <CategoryForm
-        ref={contactFormRef}
+        ref={categoryFormRef}
         title="New category"
         buttonLabel="Register"
         onSubmit={handleSubmit}

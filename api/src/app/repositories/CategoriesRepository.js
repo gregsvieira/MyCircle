@@ -52,6 +52,23 @@ class CategoriesRepository {
     `, [name, id]);
     return row;
   }
+
+  async createManyCategories(categories) {
+    if (!categories.length) {
+      return [];
+    }
+    const values = categories.map((_, index) => `($${index + 1})`).join(', ');
+
+    const query = `
+        INSERT INTO categories(name)
+        VALUES ${values}
+        RETURNING *
+    `;
+
+    const result = await db.query(query, categories.map((category) => category.name));
+
+    return result;
+  }
 }
 
 module.exports = new CategoriesRepository();
