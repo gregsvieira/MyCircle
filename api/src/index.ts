@@ -14,5 +14,5 @@ app.use(routes);
 app.use(errorHandler);
 
 app.listen(port, () => {
-    console.log(`server running on http://localhost:${port}`);
+  console.log(`server running on http://localhost:${port}`);
 });
