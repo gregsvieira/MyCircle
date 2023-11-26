@@ -5,6 +5,10 @@ interface ICategories {
   name: string;
 }
 
+interface ICreateCategory {
+  name: string;
+  }
+
 class CategoriesRepository {
   async findAll(orderBy: string = 'ASC'): Promise<ICategories[] | []> {
     const direction = orderBy.toUpperCase() === 'DESC' ? 'DESC' : 'ASC';
@@ -13,25 +17,22 @@ class CategoriesRepository {
     return rows as ICategories[] | [];
   }
 
-  async create(name: string): Promise<ICategories> {
+  async create(category: ICreateCategory): Promise<ICategories> {
     const [row] = await query(`
         INSERT INTO categories(name)
         VALUES($1)
         RETURNING *
-        `, [name]);
+        `, [category]);
 
     return row as ICategories;
   }
 
   async findById(id: string): Promise<ICategories | undefined> {
-    console.log('id', id);
     const [row] = await query(`
     SELECT *
     FROM categories
     WHERE categories.id = $1
     `, [id]);
-
-    console.log('row', row);
 
     return row as ICategories | undefined;
   }
@@ -47,7 +48,6 @@ class CategoriesRepository {
   }
 
   async delete(id: string): Promise<[]> {
-    console.log({id});
     const deletedCategory = await query('DELETE FROM categories WHERE id = $1', [id]);
 
     return deletedCategory as [];
@@ -66,7 +66,7 @@ class CategoriesRepository {
     return row as ICategories | undefined;
   }
 
-  async createManyCategories(categories: ICategories[]): Promise<ICategories[] | []> {
+  async createManyCategories(categories: ICreateCategory[]): Promise<ICategories[] | []> {
     if (!categories.length) {
       return [];
     }
