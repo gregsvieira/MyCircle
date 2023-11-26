@@ -23,6 +23,7 @@ interface IContactsSearch {
 }
 
 interface IContactSearch {
+  id: string;
   name: string;
   email: string;
   phone: string;
@@ -33,6 +34,7 @@ interface IContactSearch {
 }
 
 interface IContactCreate {
+  id: string;
   name: string;
   email: string;
   phone: string;
@@ -62,7 +64,7 @@ class ContactsRepository {
     LEFT JOIN categories ON categories.id = contacts.category_id
     WHERE contacts.id = $1
     `, [id]);
-    console.log(row);
+
     return row as IContactSearch | undefined;
   }
 
@@ -104,8 +106,7 @@ class ContactsRepository {
     RETURNING *
     `, [name, email, phone, category_id, id]);
 
-    console.log({row});
-    return row;
+    return row as IContactCreate;
   }
 
   async deleteContactById(id: string): Promise<[]> {
