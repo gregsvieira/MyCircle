@@ -1,19 +1,14 @@
-const { Router } = require('express');
-const ContactController = require('./app/controllers/ContactController');
-const CategoryController = require('./app/controllers/CategoryController');
-const UploadController = require('./app/controllers/UploadController');
+import { Router } from 'express';
+import ContactController from '../src/app/controllers/ContactController';
+import CategoryController from '../src/app/controllers/CategoryController';
+import UploadController from '../src/app/controllers/UploadController';
 
 const router = Router();
 
-router.get(
-  '/contacts',
-  ContactController.index,
-);
-
+router.get('/contacts',  ContactController.index);
 router.get('/contacts/:id', ContactController.show);
 router.delete('/contacts/:id', ContactController.delete);
 router.post('/contacts/', ContactController.store);
-router.post('/contacts/batch', ContactController.batchStoreContacts);
 router.put('/contacts/:id', ContactController.update);
 
 router.get('/categories', CategoryController.index);
@@ -24,4 +19,4 @@ router.put('/categories/:id', CategoryController.update);
 
 router.post('/upload', UploadController.execute);
 
-module.exports = router;
+export default router;

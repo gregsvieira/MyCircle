@@ -1,5 +1,5 @@
-const { Client } = require('pg');
-const auth = require('../config/auth');
+import { Client, QueryResult } from 'pg';
+import auth from '../config/auth';
 
 const {
   host, port, user, password, database,
@@ -21,7 +21,8 @@ client.connect()
     console.error('Error connecting to the database:', error);
   });
 
-exports.query = async (query, values) => {
-  const { rows } = await client.query(query, values);
+
+export const query = async (query: string, values?: unknown[]): Promise<unknown[]> => {
+  const { rows }: QueryResult = await client.query(query, values);
   return rows;
 };
