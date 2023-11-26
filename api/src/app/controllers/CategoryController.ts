@@ -1,18 +1,21 @@
-const CategoriesRepository = require('../repositories/CategoriesRepository');
-const ContactsRepository = require('../repositories/ContactsRepository');
+import { Request, Response } from 'express';
 
-const validate = require('../utils/validateFields');
-const isValidUUID = require('../utils/isValidUUID');
-const getErrorMessage = require('../utils/getErrorMessage');
+import CategoriesRepository from '../repositories/CategoriesRepository';
+import ContactsRepository from '../repositories/ContactsRepository';
+
+import validate from '../utils/validateFields';
+import isValidUUID from '../utils/isValidUUID';
+import getErrorMessage from '../utils/getErrorMessage';
+
 
 class CategoryController {
-  async index(request, response) {
+  async index(request: Request, response: Response) {
     const { orderBy } = request.query;
-    const categories = await CategoriesRepository.findAll(orderBy);
+    const categories = await CategoriesRepository.findAll(String(orderBy));
     response.json(categories);
   }
 
-  async show(request, response) {
+  async show(request: Request, response: Response) {
     const { id } = request.params;
 
     if (!isValidUUID(id)) {
@@ -28,7 +31,7 @@ class CategoryController {
     return response.json(category);
   }
 
-  async store(request, response) {
+  async store(request: Request, response: Response) {
     const { name } = request.body;
 
     if (!name) {
@@ -47,7 +50,7 @@ class CategoryController {
     return response.status(201).json(category);
   }
 
-  async delete(request, response) {
+  async delete(request: Request, response: Response) {
     const { id } = request.params;
 
     if (!isValidUUID(id)) {
@@ -65,7 +68,7 @@ class CategoryController {
     return response.sendStatus(204);
   }
 
-  async update(request, response) {
+  async update(request: Request, response: Response) {
     const { id } = request.params;
     const {
       name,
@@ -112,52 +115,6 @@ class CategoryController {
 
     return response.json(category);
   }
-
-  async batchStoreCategories(request, response) {
-    const categoriesRequested = request.body;
-
-    const allCategories = await CategoriesRepository.findAll();
-
-    const categoriesMapped = new Map(allCategories.map((category) => (
-      [(category.name).toLowerCase(), category.id]
-    )));
-
-    const categoriesFounded = [];
-    const categoriesNotFounded = [];
-
-    categoriesRequested.map((categoryRequested) => {
-      const categoryFoundId = categoriesMapped.get(categoryRequested.name);
-      let categoryFound;
-      let categoryNotFound;
-
-      if (categoryFoundId !== undefined) {
-        categoryFound = {
-          name: categoryRequested.name,
-          id: categoryFoundId,
-          created: false,
-        };
-        categoriesFounded.push(categoryFound);
-      } else {
-        categoryNotFound = {
-          name: categoryRequested.name,
-          id: categoryFoundId,
-          created: false,
-        };
-        categoriesNotFounded.push(categoryNotFound);
-      }
-      return true;
-    });
-
-    if (!categoriesNotFounded.length) {
-      return response.json({
-        categories: { ...categoriesFounded },
-      }).status(200);
-    }
-    // if (categoriesNotFounded)
-    // const res = await CategoriesRepository.createManyCategories(categoriesNotFounded);
-    // console.log(res);
-    return response.json('ok').status(200);
-  }
 }
 
-module.exports = new CategoryController();
+export default new CategoryController();
