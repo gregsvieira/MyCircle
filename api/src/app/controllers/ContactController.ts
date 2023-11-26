@@ -1,19 +1,19 @@
-const ContactsRepository = require('../repositories/ContactsRepository');
-const validate = require('../utils/validateFields');
-const isValidEmail = require('../utils/isValidEmail');
-const isValidUUID = require('../utils/isValidUUID');
-const getErrorMessage = require('../utils/getErrorMessage');
+import { Request, Response } from 'express';
+
+import ContactsRepository from '../repositories/ContactsRepository';
+import validate from '../utils/validateFields';
+import isValidEmail from '../utils/isValidEmail';
+import isValidUUID from '../utils/isValidUUID';
+import getErrorMessage from '../utils/getErrorMessage';
 
 class ContactController {
-  // Listar todos os registros
-  async index(request, response) {
+  async index(request: Request, response: Response) {
     const { orderBy } = request.query;
-    const contacts = await ContactsRepository.findAll(orderBy);
+    const contacts = await ContactsRepository.findAll(String(orderBy));
     return response.json(contacts);
   }
 
-  // Obter um registro
-  async show(request, response) {
+  async show(request: Request, response: Response) {
     const { id } = request.params;
 
     if (!isValidUUID(id)) {
@@ -22,7 +22,6 @@ class ContactController {
 
     const contact = await ContactsRepository.findById(id);
 
-    // 404: Not found
     if (!contact) {
       return response.status(404).json({ error: 'Contact not found' });
     }
@@ -30,8 +29,7 @@ class ContactController {
     return response.json(contact);
   }
 
-  // Criar novo registro
-  async store(request, response) {
+  async store(request: Request, response: Response) {
     const {
       name, email, phone, category_id,
     } = request.body;
@@ -67,13 +65,13 @@ class ContactController {
       email: email || null,
       phone,
       category_id: category_id || null,
+      user_id: ''
     });
 
     return response.status(201).json(contact);
   }
 
-  // Editar um registro
-  async update(request, response) {
+  async update(request: Request, response: Response) {
     const { id } = request.params;
     const {
       name, email, phone, category_id,
@@ -125,8 +123,7 @@ class ContactController {
     return response.json(contact);
   }
 
-  // Deletar um registro
-  async delete(request, response) {
+  async delete(request: Request, response: Response) {
     const { id } = request.params;
 
     if (!isValidUUID(id)) {
@@ -135,22 +132,14 @@ class ContactController {
 
     const contact = await ContactsRepository.findById(id);
 
-    // 404: Not found
     if (!contact) {
       return response.status(404).json({ error: 'Contact not found' });
     }
 
     await ContactsRepository.deleteContactById(id);
-    // 204: No content
     return response.sendStatus(204);
-  }
-
-  async batchStoreContacts(request, response) {
-    console.log(request.body);
-
-    return response.json(request).status(200);
   }
 }
 
 // Sigleton - Design Pattern
-module.exports = new ContactController();
+export default new ContactController();
