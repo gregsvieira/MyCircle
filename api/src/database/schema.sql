@@ -61,15 +61,15 @@ CREATE TABLE IF NOT EXISTS posts (
 );
 
 CREATE TABLE IF NOT EXISTS posts_likes (
-  id UUID NOT NULL UNIQUE DEFAULT uuid_generate_v4(),
+  id UUID NOT NULL DEFAULT uuid_generate_v4(),
   post_id UUID NOT NULL,
   user_id UUID NOT NULL,
   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at TIMESTAMP,
   deleted_at TIMESTAMP,
-  FOREIGN KEY(post_id) REFERENCES posts(id)
+  FOREIGN KEY(post_id) REFERENCES posts(id),
   FOREIGN KEY(user_id) REFERENCES users(id)
-)
+);
 
 CREATE TABLE IF NOT EXISTS categories (
   id UUID NOT NULL UNIQUE DEFAULT uuid_generate_v4(),
