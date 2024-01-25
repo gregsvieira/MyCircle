@@ -19,10 +19,11 @@ interface INotNewCategories { name: string; id: string; new: false; }
 class UploadController {
   async execute(request: Request, response: Response) {
     try {
-      const { categories, contacts }: { categories: ICategoriesRequest[], contacts: IContactsRequest[]  } = request.body;
+      const { categories, contacts, user_id }: { categories: ICategoriesRequest[], contacts: IContactsRequest[], user_id: string } = request.body;
+      const { orderBy } = request.query;
 
       // categories use-case
-      const categoriesOnDatabase = await CategoriesRepository.findAll();
+      const categoriesOnDatabase = await CategoriesRepository.findAll(String(orderBy), user_id);
 
       const categoriesOnDatabaseMapped = new Map(categoriesOnDatabase.map((category) => (
         [(category.name).toLowerCase(), category.id]
