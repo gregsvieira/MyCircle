@@ -8,19 +8,22 @@ import getErrorMessage from '../utils/getErrorMessage';
 
 class ContactController {
   async index(request: Request, response: Response) {
+    const { user_id } = request.body;
+
     const { orderBy } = request.query;
-    const contacts = await ContactsRepository.findAll(String(orderBy));
+    const contacts = await ContactsRepository.findAll({ orderBy: String(orderBy), userId: user_id});
     return response.json(contacts);
   }
 
   async show(request: Request, response: Response) {
+    const { user_id } = request.body;
     const { id } = request.params;
 
     if (!isValidUUID(id)) {
       return response.status(400).json({ error: 'Invalid Contact ID' });
     }
 
-    const contact = await ContactsRepository.findById(id);
+    const contact = await ContactsRepository.findByIdAndUserId(id, user_id);
 
     if (!contact) {
       return response.status(404).json({ error: 'Contact not found' });
@@ -31,7 +34,7 @@ class ContactController {
 
   async store(request: Request, response: Response) {
     const {
-      name, email, phone, category_id,
+      name, email, phone, category_id, user_id
     } = request.body;
 
     const { emptyFields, validatorsErrors, isValid } = validate({
@@ -54,7 +57,7 @@ class ContactController {
     }
 
     if (email) {
-      const contactExists = await ContactsRepository.findByEmail(email);
+      const contactExists = await ContactsRepository.findByEmailAndUserId(email, user_id);
       if (contactExists) {
         return response.status(400).json({ error: 'This e-mail is already in use' });
       }
@@ -65,7 +68,7 @@ class ContactController {
       email: email || null,
       phone,
       category_id: category_id || null,
-      user_id: ''
+      user_id: user_id
     });
 
     return response.status(201).json(contact);
@@ -74,7 +77,7 @@ class ContactController {
   async update(request: Request, response: Response) {
     const { id } = request.params;
     const {
-      name, email, phone, category_id,
+      name, email, phone, category_id, user_id
     } = request.body;
 
     const { emptyFields, validatorsErrors, isValid } = validate({
@@ -100,20 +103,20 @@ class ContactController {
       return response.status(400).json({ error: errorMessage });
     }
 
-    const contactExists = await ContactsRepository.findById(id);
+    const contactExists = await ContactsRepository.findByIdAndUserId(id, user_id);
 
     if (!contactExists) {
       return response.status(404).json({ error: 'Contact not found!' });
     }
 
     if (email) {
-      const contactByEmail = await ContactsRepository.findByEmail(email);
+      const contactByEmail = await ContactsRepository.findByEmailAndUserId(email, user_id);
       if (contactByEmail && contactByEmail.id !== id) {
         return response.status(400).json({ error: 'This e-mail is already in use' });
       }
     }
 
-    const contact = await ContactsRepository.updateContactById(id, {
+    const contact = await ContactsRepository.updateContactById(id, user_id, {
       name,
       email: email || null,
       phone,
@@ -125,18 +128,19 @@ class ContactController {
 
   async delete(request: Request, response: Response) {
     const { id } = request.params;
+    const { user_id } = request.body;
 
     if (!isValidUUID(id)) {
       return response.status(400).json({ error: 'Invalid Contact ID' });
     }
 
-    const contact = await ContactsRepository.findById(id);
+    const contact = await ContactsRepository.findByIdAndUserId(id, user_id);
 
     if (!contact) {
       return response.status(404).json({ error: 'Contact not found' });
     }
 
-    await ContactsRepository.deleteContactById(id);
+    await ContactsRepository.deleteContactById(id, user_id);
     return response.sendStatus(204);
   }
 }
