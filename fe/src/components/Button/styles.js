@@ -5,7 +5,7 @@ export const StyledButton = styled.button`
   border: none;
   border-radius: 4px;
   padding: 0 16px;
-  background: ${({ theme }) => theme.colors.primary.main};
+  background-color: ${({ theme }) => theme.colors.primary.main};
   font-size: 16px;
   font-weight: bold;
   color: #fff;
@@ -17,20 +17,21 @@ export const StyledButton = styled.button`
   justify-content: center;
 
   &:hover {
-    background: ${({ theme }) => theme.colors.primary.light};
+    background-color: ${({ theme }) => theme.colors.primary.light};
   }
 
   &:active {
-    background: ${({ theme }) => theme.colors.primary.dark};
+    background-color: ${({ theme }) => theme.colors.primary.dark};
   }
 
   &[disabled] {
-    background: #CCC !important;
+    background-color: ${({ theme }) => theme.mode.buttonDisabledColor} !important;
+    color: ${({ theme }) => theme.mode.textDisabledColor} !important;
     cursor: default !important;
   }
 
   ${({ theme, danger }) => danger && css`
-    background: ${theme.colors.danger.main};
+    background-color: ${theme.colors.danger.main};
 
     &:hover {
     background: ${theme.colors.danger.light};
