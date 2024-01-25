@@ -1,0 +1,16 @@
+export default {
+  backgroundColor: '#222222',
+  textColor: '#FFFFFF',
+  logoColor: '#F6F5FC',
+  inputColor: '#2E2E31',
+  linkColor: '#007bff',
+  selectTextColor: '#BCBCBC',
+  sideBarBackgroundColor: '#222222',
+  cardBackground: '#2E2E31',
+  categorySmallBackground: '#3346F0',
+  categorySmallColor: '#E0E3FF',
+  overlayColor: 'rgba(0, 0, 0, 0.8)',
+  headerBorderBottomColor: '#333333',
+  buttonDisabledColor: '#333333',
+  textDisabledColor: '#222222',
+};
