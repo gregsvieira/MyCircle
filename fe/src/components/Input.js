@@ -1,17 +1,20 @@
 import styled, { css } from 'styled-components';
 
 export default styled.input`
+  transition: all 0.2s ease-in;
+
   width: 100%;
   height: 52px;
-  background: #fff;
+  background: ${({ theme }) => theme.mode.inputColor};
   box-shadow: 0px 4px 10px 0px rgba(0, 0, 0, 0.04);
   border: none;
-  border: 2px solid #fff;
+  border: 2px solid ${({ theme }) => theme.mode.inputColor};
   border-radius: 4px;
   outline: 0;
   padding: 0 16px;
   transition: border-color 0.2s ease-in;
   appearance: none;
+  color: ${({ theme }) => theme.mode.textColor};
 
   &:focus {
     border-color: ${({ theme }) => theme.colors.primary.main};
