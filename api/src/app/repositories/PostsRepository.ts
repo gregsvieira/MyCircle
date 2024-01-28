@@ -10,15 +10,31 @@ interface IPostsReturn {
 
 }
 
+interface IContactIds {
+  id: string
+}
+
+interface IUserLikes {
+  id: string
+}
+
 interface IPosts {
   username: string;
   id: string;
   content: string;
   created_at: Date;
+  total_likes: string;
+  user_likes: IUserLikes[];
 }
 
-interface IContactIds {
-  id: string
+interface IPostsReturn {
+  username: string;
+  id: string;
+  content: string;
+  created_at: Date;
+  total_likes: string;
+  user_likes: IUserLikes[];
+  userId: string;
 }
 
 class PostsRepository {
@@ -42,7 +58,7 @@ class PostsRepository {
 
     const allIds = contactsIdsAndUserId.map((contact) => `${contact.id}`);
 
-    const row = await query(`
+    const rows = await query(`
       SELECT
         users.username,
         posts.id,
@@ -58,12 +74,18 @@ class PostsRepository {
       WHERE posts.deleted_at IS NULL
         AND posts.user_id IN (${placeholders})
       GROUP BY
-      users.username, posts.id, posts.content, posts.created_at
+        users.username, posts.id, posts.content, posts.created_at
       ORDER BY posts.created_at ${direction}
-    `, allIds.map((id) => id));
+    `, allIds.map((id) => id)) as unknown as IPosts[];
 
-    console.log(row);
-    return row as IPosts[] | [];
+    const posts = rows.map((row) => {
+      return {
+        ...row,
+        userId: user_id
+      };
+    });
+
+    return posts as IPosts[] | [];
   }
 
   async createNewPost({
