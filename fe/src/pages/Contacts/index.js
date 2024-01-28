@@ -5,16 +5,15 @@ import {
 } from './styles';
 
 import Loader from '../../components/Loader';
-import PageHeader from '../../components/PageHeader';
 
 import useContacts from './useContacts';
 
 import InputSearch from './components/InputSearch';
-import Header from './components/Header';
 import ErrorStatus from './components/ErrorStatus';
 import EmptyList from './components/EmptyList';
 import SearchNotFound from './components/SearchNotFound';
 import ContactsList from './components/ContactsList';
+import CreateRecordHeader from '../../components/CreateRecordHeader';
 
 import Modal from '../../components/Modal';
 
@@ -31,6 +30,7 @@ export default function Contacts() {
     handleChangeSearchTerm,
     hasError,
     filteredContacts,
+    quantityOfFilteredContacts,
     handleTryAgain,
     orderBy,
     handleOrderBy,
@@ -39,15 +39,11 @@ export default function Contacts() {
 
   const hasContacts = !hasError && contacts.length > 0;
   const isEmptyList = !hasError && (!isLoading && !hasContacts);
-  const isSearchEmpty = !hasError && (hasContacts && filteredContacts.length < 1);
+  const isSearchEmpty = !hasError && (hasContacts && quantityOfFilteredContacts < 1);
 
   return (
     <Container>
       <Loader isLoading={isLoading} />
-
-      <PageHeader
-        path="/"
-      />
 
       {hasContacts && (
         <InputSearch
@@ -56,10 +52,13 @@ export default function Contacts() {
         />
       )}
 
-      <Header
+      <CreateRecordHeader
         hasError={hasError}
-        quantityOfContacts={contacts}
-        quantityOfFilteredContacts={filteredContacts}
+        quantityOfItems={contacts}
+        quantityOfFilteredItems={quantityOfFilteredContacts}
+        recordLink="/contacts"
+        singularRecordType="contact"
+        pluralRecordType="contacts"
       />
 
       {hasError && <ErrorStatus onTryAgain={handleTryAgain} />}

@@ -6,28 +6,53 @@ class ContactsService {
     this.httpClient = new HttpClient('http://localhost:3001');
   }
 
-  async listContacts(orderBy = 'asc') {
-    const contacts = await this.httpClient.get(`/contacts?orderBy=${orderBy}`);
+  async listContacts(signal, orderBy = 'asc') {
+    const contacts = await this.httpClient.get(`/contacts?orderBy=${orderBy}`, { signal });
+
+    if (contacts.error) {
+      const error = contacts;
+      return error;
+    }
     return contacts.map(ContactMapper.toDomain);
   }
 
   async getContactById(id) {
     const contact = await this.httpClient.get(`/contacts/${id}`);
+
+    if (contact.error) {
+      const error = contact;
+      return error;
+    }
     return ContactMapper.toDomain(contact);
   }
 
   async createContact(contact) {
     const body = ContactMapper.toPersistence(contact);
-    return this.httpClient.post('/contacts', { body });
+    const response = await this.httpClient.post('/contacts', { body });
+    if (response.error) {
+      const error = response;
+      return error;
+    }
+    return response;
   }
 
   async updateContact(id, contact) {
     const body = ContactMapper.toPersistence(contact);
-    return this.httpClient.put(`/contacts/${id}`, { body });
+    const response = await this.httpClient.put(`/contacts/${id}`, { body });
+    if (response.error) {
+      const error = response;
+      return error;
+    }
+    return response;
   }
 
   async deleteContact(id) {
-    return this.httpClient.delete(`/contacts/${id}`);
+    const response = await this.httpClient.delete(`/contacts/${id}`);
+    if (response.error) {
+      const error = response;
+      return error;
+    }
+    return response;
   }
 }
 

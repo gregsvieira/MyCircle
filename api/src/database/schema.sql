@@ -125,3 +125,6 @@ CREATE TABLE IF NOT EXISTS invites (
 
 ALTER TABLE contacts
 ADD CONSTRAINT unique_name_email_user UNIQUE (name, email, user_id);
+
+ALTER TABLE posts_likes
+ADD CONSTRAINT unique_user_like_posts UNIQUE (post_id, user_id);

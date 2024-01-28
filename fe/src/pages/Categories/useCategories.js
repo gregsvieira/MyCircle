@@ -1,11 +1,14 @@
 import {
   useEffect, useState, useMemo, useCallback,
 } from 'react';
+import { useHistory } from 'react-router-dom';
 import APIError from '../../errors/APIError';
 import CategoriesService from '../../services/CategoriesService';
 import toast from '../../utils/toast';
 
 export default function useCategories() {
+  const history = useHistory();
+
   const [categories, setCategories] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [orderBy, setOrderyBy] = useState('asc');
@@ -19,15 +22,26 @@ export default function useCategories() {
     category.name.toLowerCase().includes(searchTerm.toLowerCase())
   )), [categories, searchTerm]);
 
-  const loadCategories = useCallback(async () => {
+  const loadCategories = useCallback(async (signal) => {
     try {
       setIsLoading(true);
-      const categoriesList = await CategoriesService.listCategories(orderBy);
+      const categoriesList = await CategoriesService.listCategories(signal, orderBy);
+
+      if (categoriesList.error) {
+        setHasError(true);
+        setCategories([]);
+        history.push('/login');
+      }
 
       setHasError(false);
       setCategories(categoriesList);
-    } catch {
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        return;
+      }
+
       setHasError(true);
+      setCategories([]);
     } finally {
       setIsLoading(false);
     }
@@ -40,7 +54,13 @@ export default function useCategories() {
   }
 
   useEffect(() => {
-    loadCategories();
+    const controller = new AbortController();
+
+    loadCategories(controller.signal);
+
+    return () => {
+      controller.abort();
+    };
   }, [loadCategories]);
 
   function handleChangeSearchTerm(event) {
@@ -93,6 +113,9 @@ export default function useCategories() {
     }
   }
 
+  const quantityOfCategories = categories.length;
+  const quantityOfFilteredCategories = filteredCategories.length;
+
   return {
     isLoading,
     isLoadingDelete,
@@ -102,6 +125,8 @@ export default function useCategories() {
     isDeleteModalVisible,
     categories,
     filteredCategories,
+    quantityOfCategories,
+    quantityOfFilteredCategories,
     orderBy,
     searchTerm,
     handleChangeSearchTerm,

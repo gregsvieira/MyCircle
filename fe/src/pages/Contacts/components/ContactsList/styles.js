@@ -24,7 +24,8 @@ export const ListHeader = styled.header`
 `;
 
 export const Card = styled.div`
-  background: #fff;
+  background: ${({ theme }) => theme.mode.cardBackground};
+  color: ${({ theme }) => theme.mode.textColor};
   height: 96px;
   width: 100%;
   padding: 16px;
@@ -34,6 +35,7 @@ export const Card = styled.div`
   align-items: center;
   justify-content: space-between;
 
+  transition: all 0.2s ease-in;
 
   & + & {
     margin-top: 16px;
@@ -44,8 +46,9 @@ export const Card = styled.div`
       align-items: center;
 
       small {
-        background: ${({ theme }) => theme.colors.primary.lighter};
-        color: ${({ theme }) => theme.colors.primary.main};
+        transition: all 0.2s ease-in;
+        background: ${({ theme }) => theme.mode.categorySmallBackground};
+        color: ${({ theme }) => theme.mode.categorySmallColor};
         font-weight: bold;
         text-transform: uppercase;
         padding: 4px;

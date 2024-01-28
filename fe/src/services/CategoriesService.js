@@ -1,3 +1,4 @@
+/* eslint-disable prefer-destructuring */
 import HttpClient from './utils/HttpClient';
 import CategoryMapper from './mappers/CategoryMapper';
 
@@ -6,29 +7,51 @@ class CategoriesService {
     this.httpClient = new HttpClient('http://localhost:3001');
   }
 
-  async listCategories(orderBy = 'asc') {
-    const categories = await this.httpClient.get(`/categories?orderBy=${orderBy}`);
-
+  async listCategories(signal, orderBy = 'asc') {
+    const categories = await this.httpClient.get(`/categories?orderBy=${orderBy}`, { signal });
+    if (categories.error) {
+      const error = categories;
+      return error;
+    }
     return categories.map(CategoryMapper.toDomain);
   }
 
   async getCategoryById(id) {
     const category = await this.httpClient.get(`/categories/${id}`);
+    if (category.error) {
+      const error = category;
+      return error;
+    }
     return CategoryMapper.toDomain(category);
   }
 
-  createCategory(category) {
+  async createCategory(category) {
     const body = CategoryMapper.toPersistence(category);
-    return this.httpClient.post('/categories', { body });
+    const response = await this.httpClient.post('/categories', { body });
+    if (response.error) {
+      const error = response;
+      return error;
+    }
+    return response;
   }
 
-  updateCategory(id, category) {
+  async updateCategory(id, category) {
     const body = CategoryMapper.toPersistence(category);
-    return this.httpClient.put(`/categories/${id}`, { body });
+    const response = await this.httpClient.put(`/categories/${id}`, { body });
+    if (response.error) {
+      const error = response;
+      return error;
+    }
+    return response;
   }
 
-  deleteCategory(id) {
-    return this.httpClient.delete(`/categories/${id}`);
+  async deleteCategory(id) {
+    const response = await this.httpClient.delete(`/categories/${id}`);
+    if (response.error) {
+      const error = response;
+      return error;
+    }
+    return response;
   }
 }
 

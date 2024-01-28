@@ -1,5 +1,11 @@
-import { Switch, Route } from 'react-router-dom';
+import React/* , { useContext } */ from 'react';
+import {
+  Switch,
+  Route,
+} from 'react-router-dom';
 
+import Login from './pages/Login';
+import Register from './pages/Register';
 import Home from './pages/Home';
 import Contacts from './pages/Contacts';
 import NewContact from './pages/NewContact';
@@ -13,6 +19,8 @@ import NotFound from './pages/NotFound';
 export default function Routes() {
   return (
     <Switch>
+      <Route path="/login" exact component={Login} />
+      <Route path="/register" exact component={Register} />
       <Route path="/" exact component={Home} />
       <Route path="/contacts" exact component={Contacts} />
       <Route path="/contacts/new" component={NewContact} />
