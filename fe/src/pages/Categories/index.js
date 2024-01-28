@@ -1,31 +1,23 @@
 /* eslint-disable react/jsx-one-expression-per-line */
 /* eslint-disable no-nested-ternary */
-import { Link } from 'react-router-dom';
 
 import {
   Container,
-  Header,
-  ListHeader,
-  Card,
   InputSearchContainer,
   ErrorContainer,
-  EmptyListContainer,
-  SearchNotFoundContainer,
 } from './styles';
 
+import CategoriesList from './CategoriesList';
+
 import Button from '../../components/Button';
-
-import arrow from '../../assets/images/icons/arrow.svg';
-import edit from '../../assets/images/icons/edit.svg';
-import trash from '../../assets/images/icons/trash.svg';
-import sad from '../../assets/images/sad.svg';
-import emptyBox from '../../assets/images/empty-box.svg';
-import magnifierQuestion from '../../assets/images/magnifier-question.svg';
-
 import Loader from '../../components/Loader';
 import Modal from '../../components/Modal';
+import SearchNotFound from '../../components/SearchNotFound';
 
-import PageHeader from '../../components/PageHeader';
+import CreateRecordHeader from '../../components/CreateRecordHeader';
+import EmptyList from '../Contacts/components/EmptyList';
+import sad from '../../assets/images/sad.svg';
+
 import useCategories from './useCategories';
 
 export default function Categories() {
@@ -36,8 +28,9 @@ export default function Categories() {
     handleCloseDeleteModal,
     handleCloseDeleteContact,
     isDeleteModalVisible,
-    categories,
     filteredCategories,
+    quantityOfCategories,
+    quantityOfFilteredCategories,
     orderBy,
     searchTerm,
     handleChangeSearchTerm,
@@ -46,6 +39,10 @@ export default function Categories() {
     handleOrderBy,
     handleDeleteCategory,
   } = useCategories();
+
+  const hasCategories = quantityOfCategories > 0;
+  const isListEmpty = !hasError && (!hasCategories && !isLoading);
+  const isSearchEmpty = !hasError && (hasCategories && quantityOfFilteredCategories < 1);
 
   return (
     <Container>
@@ -65,11 +62,7 @@ export default function Categories() {
         </p>
       </Modal>
 
-      <PageHeader
-        path="/"
-      />
-
-      {categories.length > 0 && (
+      {hasCategories && (
         <InputSearchContainer>
           <input
             value={searchTerm}
@@ -80,25 +73,14 @@ export default function Categories() {
         </InputSearchContainer>
       )}
 
-      <Header
-        justifyContent={(
-          hasError
-            ? 'flex-end'
-            : (
-              categories.length > 0
-                ? 'space-between'
-                : 'center'
-            )
-          )}
-      >
-        {(!hasError && categories.length > 0) && (
-          <strong>
-            {filteredCategories.length}
-            {filteredCategories.length === 1 ? ' category' : ' categories'}
-          </strong>
-        )}
-        <Link to="/categories/new">New Category</Link>
-      </Header>
+      <CreateRecordHeader
+        hasError={hasError}
+        quantityOfItems={quantityOfCategories}
+        quantityOfFilteredItems={quantityOfFilteredCategories}
+        recordLink="/categories"
+        singularRecordType="category"
+        pluralRecordType="categories"
+      />
 
       {hasError && (
         <ErrorContainer>
@@ -116,56 +98,27 @@ export default function Categories() {
 
       {!hasError && (
         <>
-          {(categories.length < 1 && !isLoading) && (
-          <EmptyListContainer>
-            <img src={emptyBox} alt="Empty box" />
-
+          {isListEmpty && (
+          <EmptyList>
             <p>
               You don&apos;t have any category registered! Click the <strong>“New Category”</strong>
               button above to register the first category!
             </p>
-          </EmptyListContainer>
+          </EmptyList>
           )}
 
-          {(categories.length > 0 && filteredCategories.length < 1 && (
-            <SearchNotFoundContainer>
-              <img src={magnifierQuestion} alt="Magnifier question" />
-              <span>No results were found for <strong>”{searchTerm}”</strong>.</span>
-            </SearchNotFoundContainer>
-          ))}
-
-          {filteredCategories.length > 0 && (
-          <ListHeader orderBy={orderBy}>
-            <button type="button" className="sort-button" onClick={handleOrderBy}>
-              <span>Name</span>
-              <img src={arrow} alt="arrow" />
-            </button>
-          </ListHeader>
+          {isSearchEmpty && (
+            <SearchNotFound searchTerm={searchTerm} />
           )}
 
-          {filteredCategories.map((category) => (
-            <Card key={category.id}>
-              <div className="info">
-                <div className="category-name">
-                  <strong>
-                    {category.name}
-                  </strong>
-                </div>
-              </div>
-
-              <div className="actions">
-                <Link to={`categories/edit/${category.id}`}>
-                  <img src={edit} alt="edit" />
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => handleDeleteCategory(category)}
-                >
-                  <img src={trash} alt="delete" />
-                </button>
-              </div>
-            </Card>
-          ))}
+          {hasCategories && (
+          <CategoriesList
+            orderBy={orderBy}
+            filteredCategories={filteredCategories}
+            onOrderBy={handleOrderBy}
+            onOpenDeleteCategoryModal={handleDeleteCategory}
+          />
+          )}
         </>
       )}
 
