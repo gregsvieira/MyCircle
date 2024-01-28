@@ -10,19 +10,22 @@ import getErrorMessage from '../utils/getErrorMessage';
 
 class CategoryController {
   async index(request: Request, response: Response) {
+    const { user_id } = request.body;
+
     const { orderBy } = request.query;
-    const categories = await CategoriesRepository.findAll(String(orderBy));
-    response.json(categories);
+    const categories = await CategoriesRepository.findAll(String(orderBy), user_id);
+    return response.json(categories);
   }
 
   async show(request: Request, response: Response) {
+    const { user_id } = request.body;
     const { id } = request.params;
 
     if (!isValidUUID(id)) {
       return response.status(400).json({ error: 'Invalid Category ID' });
     }
 
-    const category = await CategoriesRepository.findById(id);
+    const category = await CategoriesRepository.findByIdAndUserId(id, user_id);
 
     if (!category) {
       return response.status(404).json({ error: 'Category not found' });
@@ -32,7 +35,7 @@ class CategoryController {
   }
 
   async store(request: Request, response: Response) {
-    const { name } = request.body;
+    const { name, user_id } = request.body;
 
     if (!name) {
       return response.status(400).json({ error: 'Name is required' });
@@ -40,30 +43,32 @@ class CategoryController {
 
     const nameConverted = name.toUpperCase();
 
-    const categoryWithName = await CategoriesRepository.findByName(nameConverted);
+    const categoryWithName = await CategoriesRepository.findByNameAndUserId(nameConverted, user_id);
 
     if (categoryWithName) {
       return response.status(400).json({ error: 'This name is already in use' });
     }
 
-    const category = await CategoriesRepository.create(name);
+    const category = await CategoriesRepository.create(name, user_id);
     return response.status(201).json(category);
   }
 
   async delete(request: Request, response: Response) {
     const { id } = request.params;
+    const { user_id } = request.body;
+
 
     if (!isValidUUID(id)) {
       return response.status(400).json({ error: 'Invalid Category ID' });
     }
 
-    const contactsUsingCategory = await ContactsRepository.findByCategoryId(id);
+    const contactsUsingCategory = await ContactsRepository.findByCategoryIdAndUserId(id, user_id);
 
     if (contactsUsingCategory) {
       return response.status(400).json({ error: 'There are contacts who are using this category!' });
     }
 
-    await CategoriesRepository.delete(id);
+    await CategoriesRepository.deleteByUserId(id, user_id);
 
     return response.sendStatus(204);
   }
@@ -71,7 +76,7 @@ class CategoryController {
   async update(request: Request, response: Response) {
     const { id } = request.params;
     const {
-      name,
+      name, user_id
     } = request.body;
 
     const { emptyFields, validatorsErrors, isValid } = validate({
@@ -95,7 +100,7 @@ class CategoryController {
       return response.status(400).json({ error: errorMessage });
     }
 
-    const categoryExists = await CategoriesRepository.findById(id);
+    const categoryExists = await CategoriesRepository.findByIdAndUserId(id, user_id);
 
     if (!categoryExists) {
       return response.status(404).json({ error: 'Category not found!' });
@@ -103,13 +108,13 @@ class CategoryController {
 
     const nameConverted = name.toUpperCase();
 
-    const categoryWithName = await CategoriesRepository.findByName(nameConverted);
+    const categoryWithName = await CategoriesRepository.findByNameAndUserId(nameConverted, user_id);
 
     if (categoryWithName && categoryWithName.id !== id) {
       return response.status(400).json({ error: 'This name is already in use' });
     }
 
-    const category = await CategoriesRepository.update(id, {
+    const category = await CategoriesRepository.updateByUserId(id, user_id, {
       name,
     });
 

@@ -52,6 +52,7 @@ class HttpClient {
     }
 
     const response = await fetch(`${this.baseURL}${path}`, {
+      credentials: 'include',
       method: options.method,
       body: JSON.stringify(options.body),
       headers,
@@ -65,6 +66,12 @@ class HttpClient {
 
     if (response.ok) {
       return responseBody;
+    }
+
+    let error;
+    if (response.status === 401) {
+      error = { error: 'authenticationError' };
+      return error;
     }
 
     throw new APIError(response, responseBody);
