@@ -1,16 +1,16 @@
 version: "3.7"
 
 services:
-  database_mycontacts:
+  database_mycircle:
     image: postgres
-    container_name: database_mycontacts
+    container_name: database_mycircle
     restart: always
     ports:
       - 5432:5432
     environment:
       - POSTGRES_USER=root
-      - POSTGRES_PASSWORD=mycontacts
-      - POSTGRES_DB=mycontacts
+      - POSTGRES_PASSWORD=mycircle
+      - POSTGRES_DB=mycircle
     volumes:
       - pgdata:/data/postgres
       - ./src/database:/docker-entrypoint-initdb.d
