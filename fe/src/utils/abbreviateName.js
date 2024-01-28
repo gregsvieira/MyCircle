@@ -4,7 +4,7 @@ export default function abbreviateName(name) {
   }
 
   if (name.split(' ').length === 1) {
-    return name.slice(0, 2).toUpperCase();
+    return name.slice(0, 3).toUpperCase();
   }
 
   const words = name.split(' ');
