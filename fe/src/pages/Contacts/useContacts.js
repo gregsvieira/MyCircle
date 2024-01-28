@@ -2,10 +2,13 @@ import {
   useEffect, useState, useMemo, useCallback,
 } from 'react';
 
+import { useHistory } from 'react-router-dom';
 import ContactsService from '../../services/ContactsService';
 import toast from '../../utils/toast';
 
 export default function useContacts() {
+  const history = useHistory();
+
   const [contacts,
     setContacts] = useState([]);
   const [orderBy, setOrderyBy] = useState('asc');
@@ -20,14 +23,24 @@ export default function useContacts() {
     contact.name.toLowerCase().includes(searchTerm.toLowerCase())
   )), [contacts, searchTerm]);
 
-  const loadContacts = useCallback(async () => {
+  const loadContacts = useCallback(async (signal) => {
     try {
       setIsLoading(true);
-      const contactsList = await ContactsService.listContacts(orderBy);
+      const contactsList = await ContactsService.listContacts(signal, orderBy);
+
+      if (contactsList.error) {
+        setHasError(true);
+        setContacts([]);
+        history.push('/login');
+      }
 
       setHasError(false);
       setContacts(contactsList);
-    } catch {
+    } catch (error) {
+      if (error instanceof DOMException && error.name === 'AbortError') {
+        return;
+      }
+
       setHasError(true);
       setContacts([]);
     } finally {
@@ -36,7 +49,13 @@ export default function useContacts() {
   }, [orderBy]);
 
   useEffect(() => {
-    loadContacts();
+    const controller = new AbortController();
+
+    loadContacts(controller.signal);
+
+    return () => {
+      controller.abort();
+    };
   }, [loadContacts]);
 
   function handleOrderBy() {
@@ -88,6 +107,8 @@ export default function useContacts() {
     }
   }
 
+  const quantityOfFilteredContacts = filteredContacts.length;
+
   return {
     isLoading,
     isLoadingDelete,
@@ -101,6 +122,7 @@ export default function useContacts() {
     hasError,
     handleTryAgain,
     filteredContacts,
+    quantityOfFilteredContacts,
     orderBy,
     handleOrderBy,
     handleDeleteContact,

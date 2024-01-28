@@ -5,17 +5,70 @@ export const Container = styled.div`
   position: relative;
 `;
 
+export const InputSearchContainer = styled.div`
+  width: 100%;
+  margin-bottom: 24px;
+
+  input {
+    width: 100%;
+    height: 50px;
+    background-color: ${({ theme }) => theme.mode.inputColor};
+    border: none;
+    border-radius: 25px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.04);
+    outline: 0;
+    padding: 0 16px;
+
+    &::placeholder{
+      color: #BCBCBC;
+    }
+  }
+`;
+
+export const ErrorContainer = styled.div`
+  display: flex;
+  margin-top: 16px;
+  align-items: center;
+
+  .details {
+    margin-left: 16px;
+
+    strong {
+    font-size: 16px;
+    color: ${({ theme }) => theme.colors.danger.main};
+    display: block;
+    margin-bottom: 8px;
+  }
+  }
+`;
+
+export const EmptyListContainer = styled.div`
+  margin-top: 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  p && span {
+    margin-top: 8px;
+    text-align: center;
+    color: ${({ theme }) => theme.colors.gray[200]};
+
+    strong {
+      color: ${({ theme }) => theme.colors.primary.main};
+    }
+  }
+`;
+
 export const Header = styled.header`
+  transition: all 0.2s ease-in;
+
   display: flex;
   align-items: center;
   justify-content: center;
   padding-bottom: 16px;
   margin: 32px 0px;
-
-  h1 {
-    color: #222;
-    font-size: 28px;
-  }
+  border-bottom: 2px solid ${({ theme }) => theme.mode.headerBorderBottomColor};
 `;
 
 export const MenuBar = styled.div`
@@ -44,3 +97,10 @@ export const MenuBar = styled.div`
 
 
   `;
+
+export const Sentinel = styled.div`
+  margin-top: 20px;
+  height: 48px;
+  width: 100%;
+  padding: 16px;
+`;

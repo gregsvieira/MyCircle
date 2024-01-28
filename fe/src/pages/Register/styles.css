@@ -1,0 +1,15 @@
+/* .input:focus+.focus-input::after {
+  top: -15px;
+} */
+
+.input:focus+.focus-input::before {
+  width: 100%;
+}
+
+.has-val+.focus-input::after {
+  top: -15px;
+}
+
+.has-val+.focus-input::before {
+  width: 100%;
+}

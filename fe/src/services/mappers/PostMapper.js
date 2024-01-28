@@ -15,6 +15,10 @@ class PostMapper {
       abbreviatedName: abbreviateName(persistensePost.username),
       content: persistensePost.content,
       createdAt: formatDate(persistensePost.created_at),
+      totalLikes: persistensePost.total_likes,
+      usersLikes: {
+        ...persistensePost.users_likes,
+      },
     };
   }
 }

@@ -6,7 +6,7 @@ export const Container = styled.div`
   align-items: flex-start;
   span {
     margin-left: 24px;
-    color: ${({ theme }) => theme.colors.gray[200]};
+    color: ${({ theme }) => theme.mode.textColor};
     word-break: break-word;
   }
 `;

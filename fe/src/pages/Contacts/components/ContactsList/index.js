@@ -66,7 +66,7 @@ export default function ContactsList({
     intersectionObserver.observe(document.querySelector('.sentinel'));
 
     return () => intersectionObserver.disconnect();
-  }, []);
+  }, [handleShowMore]);
 
   return (
     <>
@@ -169,7 +169,7 @@ ContactsList.propTypes = {
     category: PropTypes.shape({
       id: PropTypes.string.isRequired,
       name: PropTypes.string,
-    }),
+    }) || null,
     errors: PropTypes.shape({
       name: PropTypes.bool.isRequired,
       email: PropTypes.bool.isRequired,
