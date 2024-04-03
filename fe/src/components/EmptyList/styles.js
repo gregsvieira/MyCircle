@@ -1,20 +1,19 @@
 import styled from 'styled-components';
 
 export const Container = styled.div`
+  margin: 16px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 
-  margin-top: 16px;
-
   p {
-    margin-top: 8px;
+    margin-top: 16px;
     text-align: center;
-    color: ${({ theme }) => theme.colors.gray[200]};
+    color: ${({ theme }) => theme.mode.textColor};
 
     strong {
-      color: ${({ theme }) => theme.colors.primary.main};
+      color: ${({ theme }) => theme.mode.textColor};
     }
   }
 `;

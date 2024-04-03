@@ -1,5 +1,5 @@
 import { Client, QueryResult } from 'pg';
-import auth from '../config/auth';
+import auth from '../config/env';
 
 const {
   host, port, user, password, database,

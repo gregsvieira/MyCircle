@@ -1,19 +1,17 @@
 /* eslint-disable react/jsx-one-expression-per-line */
-import PropTypes from 'prop-types';
-
+import emptyBox from '../../assets/images/empty-box.svg';
 import { Container } from './styles';
 
-import emptyBox from '../../assets/images/empty-box.svg';
-
-export default function EmptyList({ children }) {
+export default function EmptyList() {
   return (
     <Container>
-      <img src={emptyBox} alt="Empty Box" />
-      {children}
+      <img src={emptyBox} alt="Empty box" />
+
+      <p>
+        You don&apos;t have any contact registered!
+        Click the <strong>“New Contact”</strong> button above
+        to register the first contact!
+      </p>
     </Container>
   );
 }
-
-EmptyList.propTypes = {
-  children: PropTypes.node.isRequired,
-};

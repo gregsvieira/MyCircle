@@ -15,7 +15,7 @@ import Modal from '../../components/Modal';
 import SearchNotFound from '../../components/SearchNotFound';
 
 import CreateRecordHeader from '../../components/CreateRecordHeader';
-import EmptyList from '../Contacts/components/EmptyList';
+import EmptyList from '../../components/EmptyList';
 import sad from '../../assets/images/sad.svg';
 
 import useCategories from './useCategories';

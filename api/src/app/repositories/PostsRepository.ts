@@ -23,7 +23,7 @@ interface IPosts {
   id: string;
   content: string;
   created_at: Date;
-  total_likes: string;
+  total_likes: number;
   user_likes: IUserLikes[];
 }
 
@@ -32,7 +32,7 @@ interface IPostsReturn {
   id: string;
   content: string;
   created_at: Date;
-  total_likes: string;
+  total_likes: number;
   user_likes: IUserLikes[];
   userId: string;
 }
@@ -81,6 +81,7 @@ class PostsRepository {
     const posts = rows.map((row) => {
       return {
         ...row,
+        total_likes: Number(row.total_likes),
         userId: user_id
       };
     });
@@ -91,7 +92,7 @@ class PostsRepository {
   async createNewPost({
     content,
     user_id,
-  }: {content: string; user_id: string }): Promise<IPostsReturn>{
+  }: {content: string; user_id: string }): Promise<IPostsReturn> {
 
     const [row] = await query(`
       INSERT INTO posts(content, user_id)

@@ -10,7 +10,7 @@ import useContacts from './useContacts';
 
 import InputSearch from './components/InputSearch';
 import ErrorStatus from './components/ErrorStatus';
-import EmptyList from './components/EmptyList';
+import EmptyList from '../../components/EmptyList';
 import SearchNotFound from './components/SearchNotFound';
 import ContactsList from './components/ContactsList';
 import CreateRecordHeader from '../../components/CreateRecordHeader';
@@ -26,6 +26,7 @@ export default function Contacts() {
     handleCloseDeleteContact,
     isDeleteModalVisible,
     contacts,
+    quantityOfContacts,
     searchTerm,
     handleChangeSearchTerm,
     hasError,
@@ -54,7 +55,7 @@ export default function Contacts() {
 
       <CreateRecordHeader
         hasError={hasError}
-        quantityOfItems={contacts}
+        quantityOfItems={quantityOfContacts}
         quantityOfFilteredItems={quantityOfFilteredContacts}
         recordLink="/contacts"
         singularRecordType="contact"

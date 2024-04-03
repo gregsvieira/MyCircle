@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import {
-  Container, StyledBagde, StyledImage, StyledSpan, StyledMessages,
+  Container, Bagde, Image, Span, Messages,
 } from './styles';
 
 function Avatar({
@@ -10,23 +10,23 @@ function Avatar({
   hasRecentPost,
   messages,
   isActive,
+  onClick,
 }) {
   const messagesCount = messages > 99 ? '99+' : messages;
-
   return (
-    <Container size={size} hasRecentPost={hasRecentPost}>
-      {isActive && <StyledBagde size={size} />}
-      {messages > 0 && <StyledMessages size={size}>{messagesCount}</StyledMessages>}
+    <Container size={size} hasRecentPost={hasRecentPost} onClick={() => onClick}>
+      {isActive && <Bagde size={size} />}
+      {messages > 0 && <Messages size={size}>{messagesCount}</Messages>}
 
       {src ? (
-        <StyledImage
+        <Image
           alt={name}
           src={src}
         />
       ) : (
-        <StyledSpan size={size}>
+        <Span size={size}>
           {name}
-        </StyledSpan>
+        </Span>
       ) }
     </Container>
   );
@@ -39,6 +39,7 @@ Avatar.propTypes = {
   isActive: PropTypes.bool,
   hasRecentPost: PropTypes.bool,
   messages: PropTypes.number,
+  onClick: PropTypes.func,
 };
 
 Avatar.defaultProps = {
@@ -47,6 +48,7 @@ Avatar.defaultProps = {
   hasRecentPost: false,
   isActive: false,
   src: '',
+  onClick: null,
 };
 
 export default Avatar;

@@ -8,6 +8,7 @@ class PostsService {
 
   async listPosts(orderBy = 'desc') {
     const posts = await this.httpClient.get(`/posts?orderBy=${orderBy}`);
+
     if (posts.error) {
       const error = posts;
       return error;
@@ -17,7 +18,6 @@ class PostsService {
   }
 
   async createPost(post) {
-    console.log('post no service', post);
     const body = PostMapper.toPersistence(post);
     const response = await this.httpClient.post('/posts/', { body });
     if (response.error) {
