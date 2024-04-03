@@ -1,4 +1,6 @@
 import { query } from '../../database';
+import { countObjectPlaceholders } from '../utils/countObjectPlaceholders';
+import { getNonEmptyObjectValues } from '../utils/getNonEmptyObjectValues';
 
 interface IUsers {
   userId?: string;
@@ -7,8 +9,9 @@ interface IUsers {
   username: string;
   phone: string;
   password: string;
-  active: boolean;
   role_id: string;
+  image: string;
+  imageKey: string;
 }
 
 interface ICreateUser {
@@ -20,6 +23,8 @@ interface ICreateUser {
   password: string;
   active: boolean;
   role_id: string;
+  image: string;
+  imageKey: string;
 }
 
 interface IUserSearched {
@@ -33,6 +38,10 @@ interface IUserSearched {
   role_id: string;
 }
 
+interface IUsersMap {
+  [key: string]: string | null | undefined;
+}
+
 class UsersRepository {
   async findAll(): Promise<IUsers[] | []> {
     const rows = await query('SELECT * FROM users WHERE users.deleted_at IS NULL');
@@ -40,16 +49,26 @@ class UsersRepository {
     return rows as IUsers[] | [];
   }
 
-  async createUser(user: IUsers): Promise<ICreateUser> {
-    const { userId, name, email, username, phone, password, role_id } = user;
+  async createUser(user: IUsersMap): Promise<ICreateUser | null> {
+    const { userId, image } = user;
 
-    const id = userId ?? 'uuid_generate_v4()';
+    const userValues = getNonEmptyObjectValues(user);
+
+    if (!userValues) {
+      return null;
+    }
+
+    const placeHolders = countObjectPlaceholders(userValues);
+
+    const idExists = userId ? 'id,' : '';
+
+    const imageExists = image ? ', image' : '';
 
     const [row] = await query(`
-        INSERT INTO users(id, name, email, username, phone, password, role_id)
-        VALUES($1, $2, $3, $4, $5, $6, $7)
-        RETURNING *
-        `, [id, name, email, username, phone, password, role_id]);
+      INSERT INTO users(${idExists} name, username, email, password, role_id${imageExists})
+      VALUES(${placeHolders})
+      RETURNING *
+      `, userValues);
 
     return row as ICreateUser;
   }

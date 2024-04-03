@@ -25,7 +25,7 @@ export default function Home() {
     postFormRef,
     handleSubmit,
   } = useHome();
-
+  console.log('posts no home', posts);
   return (
     <Container>
       <Loader isLoading={isLoading} />

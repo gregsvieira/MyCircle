@@ -11,17 +11,18 @@ class UsersService {
     return this.httpClient.post('/signin', { body });
   }
 
-  async signUp({
-    name, username, email, password,
-  }) {
-    const body = UserMapper.toPersistenceSignUp({
-      name, username, email, password,
+  async signUp(formData) {
+    return this.httpClient.post('/signup', {
+      formData,
     });
-    return this.httpClient.post('/signup', { body });
   }
 
   async signOut() {
     return this.httpClient.post('/signout');
+  }
+
+  async profile() {
+    return this.httpClient.get('/profile');
   }
 }
 

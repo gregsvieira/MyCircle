@@ -1,19 +1,19 @@
-import { ThemeProvider } from 'styled-components';
 import { BrowserRouter } from 'react-router-dom';
+import React, { useState } from 'react';
+import { ThemeProvider } from 'styled-components';
 
-import { useState/* , useContext */ } from 'react';
 import GlobalStyles from '../../assets/styles/global';
-import themes from '../../assets/styles/themes';
-import colors from '../../assets/styles/themes/default';
 import { Header } from '../Header';
 import Routes from '../../Routes';
 
 import { Container } from './styles';
 
 import ToastContainer from '../Toast/ToastContainer';
-import NavBar from '../NavBar';
 
 import { AuthProvider } from '../../contexts/authContext/auth';
+import NavBar from '../private/NavBar';
+import themes from '../../assets/styles/themes';
+import colors from '../../assets/styles/themes/default';
 
 function App() {
   const [theme, setTheme] = useState('light');

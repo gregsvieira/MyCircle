@@ -1,5 +1,15 @@
 -- CREATE DATABASE mycircle;
 
+CREATE OR REPLACE FUNCTION generate_image_key()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.image IS NOT NULL THEN
+        NEW.image_key := uuid_generate_v4();
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 CREATE TYPE role_name AS ENUM ('admin', 'regular_user');
@@ -47,6 +57,8 @@ CREATE TABLE IF NOT EXISTS users (
   deleted_at TIMESTAMP,
   active BOOLEAN DEFAULT true NOT NULL,
   role_id UUID NOT NULL,
+  image VARCHAR,
+  image_key UUID UNIQUE,
   FOREIGN KEY(role_id) REFERENCES roles(id)
 );
 
@@ -69,6 +81,28 @@ CREATE TABLE IF NOT EXISTS posts_likes (
   deleted_at TIMESTAMP,
   FOREIGN KEY(post_id) REFERENCES posts(id),
   FOREIGN KEY(user_id) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS chat (
+  id UUID NOT NULL UNIQUE DEFAULT uuid_generate_v4(),
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP,
+  deleted_at TIMESTAMP,
+  sender_id UUID NOT NULL,
+  receiver_id UUID NOT NULL,
+  receiver_token UUID,
+  sender_token UUID,
+  FOREIGN KEY(sender_id) REFERENCES users(id),
+  FOREIGN KEY(receiver_id) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS messages (
+  id UUID NOT NULL UNIQUE DEFAULT uuid_generate_v4(),
+  created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP,
+  deleted_at TIMESTAMP,
+  chat_id UUID NOT NULL,
+  FOREIGN KEY(chat_id) REFERENCES chat(id)
 );
 
 CREATE TABLE IF NOT EXISTS categories (
@@ -128,3 +162,9 @@ ADD CONSTRAINT unique_name_email_user UNIQUE (name, email, user_id);
 
 ALTER TABLE posts_likes
 ADD CONSTRAINT unique_user_like_posts UNIQUE (post_id, user_id);
+
+CREATE TRIGGER trigger_create_image_key
+BEFORE INSERT
+ON users
+FOR EACH ROW
+EXECUTE FUNCTION generate_image_key();

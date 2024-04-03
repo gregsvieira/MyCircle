@@ -5,13 +5,14 @@ import {
   AiOutlineTeam,
   AiOutlineMessage,
   AiOutlineCloudUpload,
+  AiOutlineLogout,
 } from 'react-icons/ai';
 import { BiCategoryAlt } from 'react-icons/bi';
 
 import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
-import ReactPortal from '../ReactPortal';
+import ReactPortal from '../../ReactPortal';
 import { Container, Overlay } from './styles';
 
 export default function SideBar({ onShowSideBar }) {
@@ -46,6 +47,10 @@ export default function SideBar({ onShowSideBar }) {
             <Link to="/upload">
               <AiOutlineCloudUpload />
               <span>Upload</span>
+            </Link>
+            <Link to="/logout">
+              <AiOutlineLogout />
+              <span>Logout</span>
             </Link>
           </nav>
         </Container>

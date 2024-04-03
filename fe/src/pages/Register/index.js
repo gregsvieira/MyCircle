@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-unresolved
 import React from 'react';
 import useRegister from './useRegister';
 
@@ -11,8 +12,8 @@ import {
   MessageLink,
 } from './styles';
 import FormGroup from '../../components/FormGroup';
+import FormGroupImage from '../../components/FormGroupImage';
 import Input from '../../components/Input';
-// eslint-disable-next-line import/no-unresolved
 import './styles.css';
 import Loader from '../../components/Loader';
 
@@ -33,6 +34,9 @@ export default function Register() {
     handlePasswordChange,
     getErrorMessageByFieldName,
     isFormValid,
+    imagePreview,
+    handleImageChange,
+    handleImageClick,
   } = useRegister();
 
   return (
@@ -40,6 +44,14 @@ export default function Register() {
       <RegisterContainer>
         <Loader isLoading={isLoading} />
         <Form onSubmit={handleSubmit}>
+          <FormGroupImage name="file" image={imagePreview} handleImageClick={handleImageClick}>
+            <Input
+              type="file"
+              onChange={handleImageChange}
+              name="file"
+            />
+          </FormGroupImage>
+
           <FormGroup error={getErrorMessageByFieldName('name')}>
             <Input
               value={name}
@@ -92,7 +104,7 @@ export default function Register() {
               disabled={!isFormValid}
               isLoading={isSubmitting}
             >
-              Sign In
+              Sign Up
             </Button>
           </ButtonContainer>
           <MessageContainer>

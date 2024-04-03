@@ -3,13 +3,16 @@ import { hash , compare } from 'bcrypt';
 import { sign/* , verify */ } from 'jsonwebtoken';
 import UsersRepository from '../repositories/UsersRepository';
 import UsersTokensRepository from '../repositories/UsersTokensRepository';
-import auth from '../../config/auth';
+import auth from '../../config/env';
 import addDaysToCurrentDate from '../utils/addDaysToCurrentDate';
 import RolesRepository from '../repositories/RolesRepository';
 import ContactsRepository from '../repositories/ContactsRepository';
+import isValidUUID from '../utils/isValidUUID';
 
 class UsersController {
   async signUp(request: Request, response: Response) {
+    const { file } = request;
+
     const {
       name,
       email,
@@ -18,6 +21,7 @@ class UsersController {
       password,
       role,
     } = request.body;
+
     const roleId = await RolesRepository.findRoleIdByName(role ?? 'regular_user');
 
     const contactIdWithSameEmail = await ContactsRepository.findByEmail(email);
@@ -26,7 +30,7 @@ class UsersController {
     const emailExists = await UsersRepository.findByEmail(email);
 
     if (usernameExists || emailExists) {
-      return response.status(400).json({error: 'User already exist!'});
+      return response.status(400).json({error: 'User already exist!', success: false});
     }
 
     const passwordHashed = await hash(password, 8);
@@ -39,16 +43,18 @@ class UsersController {
       password: passwordHashed,
       phone,
       role_id: roleId.id,
-      active: true
+      image: file?.filename,
     });
 
     if (!user) {
-      return response.status(400).json({error: 'Something went wrong, try again later!'});
+      return response.status(400).json({error: 'Something went wrong, try again later!', success: false});
     }
 
     return response.status(200).json({
+      success: true,
       username,
       email,
+      error: false,
     });
 
   }
@@ -66,7 +72,8 @@ class UsersController {
 
     if (!user) {
       return response.status(401).json({
-        error: 'Username or password incorrect!'
+        error: 'Username or password incorrect!',
+        success: false
       });
     }
 
@@ -74,14 +81,15 @@ class UsersController {
 
     if (!passwordMatch) {
       return response.status(401).json({
-        error: 'Username or password incorrect!'
+        error: 'Username or password incorrect!',
+        success: false
       });
     }
 
     const expiresDate = addDaysToCurrentDate(expires_in_token);
 
     if(!expiresDate) {
-      return response.status(400).json({error: 'Something went wrong, try again later!'});
+      return response.status(400).json({error: 'Something went wrong, try again later!', success: false});
     }
     const accessToken = sign({ username: user.username }, secret_token, {
       subject: user.id,
@@ -108,13 +116,28 @@ class UsersController {
       maxAge: 7 * 86400,
       path: '/'
     }).status(200).json({
-      token: accessToken,
-      refreshToken: refreshToken
+      success: true,
+      username: user.username,
+      error: false,
     });
   }
 
   async signOut(request: Request, response: Response) {
-    return response.clearCookie('auth').status(201);
+    return response.clearCookie('auth').status(201).json({success: true, error: false
+    });
+  }
+
+  async profile(request: Request, response: Response) {
+    const { user_id } = request.body;
+
+    if (!isValidUUID(user_id) || !user_id) {
+      return response.status(400).json({ error: 'Invalid ID' });
+    }
+
+    const user = await UsersRepository.findById(user_id);
+
+    return response.status(200).json(
+      user);
   }
 
 
