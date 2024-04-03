@@ -107,6 +107,7 @@ export default function useContacts() {
     }
   }
 
+  const quantityOfContacts = contacts.length;
   const quantityOfFilteredContacts = filteredContacts.length;
 
   return {
@@ -117,6 +118,7 @@ export default function useContacts() {
     handleCloseDeleteModal,
     handleCloseDeleteContact,
     contacts,
+    quantityOfContacts,
     searchTerm,
     handleChangeSearchTerm,
     hasError,

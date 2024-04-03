@@ -10,15 +10,16 @@ class PostMapper {
 
   toDomain(persistensePost) {
     return {
+      userId: persistensePost.userId,
       id: persistensePost.id,
       username: persistensePost.username,
       abbreviatedName: abbreviateName(persistensePost.username),
       content: persistensePost.content,
       createdAt: formatDate(persistensePost.created_at),
       totalLikes: persistensePost.total_likes,
-      usersLikes: {
+      usersLikes: [
         ...persistensePost.users_likes,
-      },
+      ],
     };
   }
 }

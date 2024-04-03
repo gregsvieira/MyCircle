@@ -13,6 +13,8 @@ export default function useRegister() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [image, setImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
 
   const {
     errors, setError, removeError, getErrorMessageByFieldName,
@@ -28,14 +30,19 @@ export default function useRegister() {
   stopLoading();
 
   const handleSubmit = async (event) => {
+    setIsSubmitting(true);
+    setIsLoading(true);
     event.preventDefault();
 
-    setIsSubmitting(true);
+    const formData = {
+      image,
+      name,
+      username,
+      email,
+      password,
+    };
 
-    const res = await register({
-      name, username, email, password,
-    });
-    console.log(res);
+    await register(formData);
     setIsSubmitting(false);
   };
 
@@ -79,19 +86,33 @@ export default function useRegister() {
     }
   }
 
+  const handleImageChange = (event) => {
+    if (event.target.files && event.target.files.length > 0) {
+      setImage(event.target.files[0]);
+      setImagePreview(URL.createObjectURL(event.target.files[0]));
+    }
+  };
+
+  const handleImageClick = () => {
+    document.querySelector('input[type="file"]').click();
+  };
+
   return {
     isLoading,
     username,
+    handleUsernameChange,
     name,
+    handleNameChange,
     email,
+    handleEmailChange,
     password,
+    handlePasswordChange,
+    handleImageChange,
+    imagePreview,
     isSubmitting,
     handleSubmit,
-    handleUsernameChange,
-    handleNameChange,
-    handleEmailChange,
-    handlePasswordChange,
     getErrorMessageByFieldName,
     isFormValid,
+    handleImageClick,
   };
 }

@@ -7,7 +7,7 @@ export default function SearchNotFound({ searchTerm }) {
   return (
     <Container>
       <img src={magnifierQuestion} alt="Magnifier question" />
-      <span>Nenhum resultado foi encontrado para <strong>”{searchTerm}”</strong>.</span>
+      <span>No results found for <strong>”{searchTerm}”</strong>.</span>
     </Container>
   );
 }

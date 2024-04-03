@@ -1,9 +1,7 @@
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
+import { AiOutlineCheckCircle, AiOutlineCloseCircle } from 'react-icons/ai';
 import { Container } from './styles';
-
-import xCircleIcon from '../../../assets/images/icons/x-circle.svg';
-import checkCircleIcon from '../../../assets/images/icons/check-circle.svg';
 
 export default function ToastMessage({ message, onRemoveMessage }) {
   useEffect(() => {
@@ -27,8 +25,8 @@ export default function ToastMessage({ message, onRemoveMessage }) {
       tabIndex={0}
       role="button"
     >
-      {message.type === 'danger' && <img src={xCircleIcon} alt="x" />}
-      {message.type === 'success' && <img src={checkCircleIcon} alt="check" />}
+      {message.type === 'danger' && <AiOutlineCloseCircle size={22} />}
+      {message.type === 'success' && <AiOutlineCheckCircle size={22} />}
       <strong>{message.text}</strong>
     </Container>
   );

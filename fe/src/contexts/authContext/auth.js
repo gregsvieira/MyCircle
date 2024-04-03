@@ -8,7 +8,7 @@ export const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
   const {
-    user,
+    isLoggedIn,
     loading,
     register,
     login,
@@ -17,7 +17,7 @@ export function AuthProvider({ children }) {
 
   return (
     <AuthContext.Provider value={{
-      authenticated: !!user, user, loading, register, login, logout,
+      authenticated: !!isLoggedIn, isLoggedIn, loading, register, login, logout,
     }}
     >
       {children}

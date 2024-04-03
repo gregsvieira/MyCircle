@@ -18,6 +18,7 @@ class HttpClient {
       method: 'POST',
       body: options?.body,
       headers: options?.headers,
+      formData: options?.formData,
     });
   }
 
@@ -38,11 +39,12 @@ class HttpClient {
 
   async makeRequest(path, options) {
     await delay(500);
-
     const headers = new Headers();
+    let body = null;
 
     if (options.body) {
-      headers.append('Content-Type', 'application/json');
+      headers.set('Content-Type', 'application/json');
+      body = JSON.stringify(options.body);
     }
 
     if (options.headers) {
@@ -51,12 +53,33 @@ class HttpClient {
       });
     }
 
-    const response = await fetch(`${this.baseURL}${path}`, {
-      credentials: 'include',
-      method: options.method,
-      body: JSON.stringify(options.body),
-      headers,
-    });
+    let response;
+    if (options.formData) {
+      const {
+        image, name, username, email, password,
+      } = options.formData;
+
+      const formData = new FormData();
+      formData.append('file', image);
+      formData.append('name', name);
+      formData.append('username', username);
+      formData.append('email', email);
+      formData.append('password', password);
+      body = formData;
+      response = await fetch(`${this.baseURL}${path}`, {
+        method: options.method,
+        body: formData,
+      });
+    }
+
+    if (!options.formData) {
+      response = await fetch(`${this.baseURL}${path}`, {
+        credentials: 'include',
+        method: options.method,
+        body,
+        headers,
+      });
+    }
 
     let responseBody = null;
     const contentType = response.headers.get('Content-Type');
@@ -69,6 +92,11 @@ class HttpClient {
     }
 
     let error;
+    if (response.status === 400) {
+      error = { error: 'badRequest' };
+      return error;
+    }
+
     if (response.status === 401) {
       error = { error: 'authenticationError' };
       return error;

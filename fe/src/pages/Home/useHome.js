@@ -18,7 +18,6 @@ export default function useHome() {
     try {
       setIsLoading(true);
       const postsList = await PostsService.listPosts(orderBy);
-      console.log(postsList);
       if (postsList.error) {
         setHasError(true);
         setPosts([]);

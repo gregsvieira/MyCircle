@@ -7,30 +7,37 @@ import delay from '../../utils/delay';
 
 export default function useAuth() {
   const history = useHistory();
-  const [user, setUser] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const recoveredUser = localStorage.getItem('user');
+    const recoveredIsloggedIn = localStorage.getItem('isLoggedIn');
 
-    if (recoveredUser) {
-      setUser(JSON.parse(recoveredUser));
+    if (recoveredIsloggedIn) {
+      setIsLoggedIn(recoveredIsloggedIn);
     }
 
     setLoading(false);
   }, [setLoading]);
 
-  const register = async ({
-    name, username, email, password,
-  }) => {
+  const register = async (formData) => {
     try {
-      const userRegistered = await UsersService.signUp({
-        name, username, email, password,
+      const userRegistered = await UsersService.signUp(formData);
+
+      if (userRegistered.error) {
+        toast({
+          type: 'danger',
+          text: `${userRegistered.error} `,
+        });
+      }
+      toast({
+        type: 'success',
+        text: 'Registered successfully!',
       });
 
       toast({
         type: 'success',
-        text: `Registered successfully! Username: ${userRegistered.username} Email: ${userRegistered.email} `,
+        text: `${userRegistered.email} `,
       });
 
       await delay(500);
@@ -52,25 +59,30 @@ export default function useAuth() {
 
   const login = async (email, password) => {
     try {
-      const { token, refreshToken } = await UsersService.signIn({ email, password });
+      const {
+        success, error,
+      } = await UsersService.signIn({ email, password });
 
-      const loggedUser = {
-        token,
-        refresh_token: refreshToken,
-        email,
-      };
+      localStorage.setItem('isLoggedIn', isLoggedIn);
 
-      localStorage.setItem('user', JSON.stringify(loggedUser));
-
-      if (loggedUser) {
-        setUser(loggedUser);
-        history.push('/');
+      if (error && !success) {
         toast({
-          type: 'success',
-          text: 'Login successful',
+          type: 'danger',
+          text: 'Unable to login',
         });
+        setIsLoggedIn(true);
+        localStorage.removeItem('isLoggedIn');
+        return history.push('/login');
       }
-      return loggedUser;
+
+      setIsLoggedIn(true);
+      history.push('/');
+      toast({
+        type: 'success',
+        text: 'Login successful',
+      });
+
+      return isLoggedIn;
     } catch (error) {
       let message;
       if (error instanceof APIError) {
@@ -81,20 +93,36 @@ export default function useAuth() {
         type: 'danger',
         text: `${message ?? 'Unable to login'}`,
       });
-      setUser(null);
-      localStorage.removeItem('user');
+      setIsLoggedIn(null);
+      localStorage.removeItem('isLoggedIn');
       return history.push('/login');
     }
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('user');
-    history.push('/login');
+  const logout = async () => {
+    const {
+      success, error,
+    } = await UsersService.signOut();
+
+    if (error && !success) {
+      toast({
+        type: 'danger',
+        text: 'Unable to logout. Try again!',
+      });
+      return error;
+    }
+
+    setIsLoggedIn(null);
+    localStorage.removeItem('isLoggedIn');
+    toast({
+      type: 'success',
+      text: 'Logout successful',
+    });
+    return success;
   };
 
   return {
-    user,
+    isLoggedIn,
     loading,
     register,
     login,

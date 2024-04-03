@@ -13,3 +13,16 @@ export const Container = styled.nav`
     cursor: pointer;
   }
 `;
+
+export const NavBarEmpty = styled.div`
+  padding: 16px 0;
+  width: 468px;
+  height: 32px;
+`;
+
+export const AvatarWrapper = styled.div`
+  margin-right: 6px;
+  &:hover{
+    cursor: pointer;
+  }
+`;
